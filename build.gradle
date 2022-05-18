@@ -18,3 +18,9 @@ dependencies {
 }
 
 mainClassName = 'mcbot.Main'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'mcbot.Main'
+    }
+}
