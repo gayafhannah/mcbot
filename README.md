@@ -1,0 +1,2 @@
+# mcbot
+Minecraft bot
