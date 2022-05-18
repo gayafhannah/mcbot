@@ -1,2 +1,2 @@
 # mcbot
-Minecraft bot
+A Minecraft bot thing lol.
