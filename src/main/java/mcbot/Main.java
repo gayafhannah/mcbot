@@ -1,6 +1,7 @@
 package mcbot;
 
 import mcbot.Utilities;
+import mcbot.Entity;
 //import java.io.OutputStream;
 //import java.io.ByteArrayOutputStream;
 //import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ public class Main {
         System.out.println("Minecraft Bot thing lmao!");
         System.out.println("--------");
 
+        ArrayList<Entity> entities = new ArrayList<Entity>();
         String addr = defaultAddress;
         int port = defaultPort;
         String name = defaultUsername;
@@ -45,11 +47,22 @@ public class Main {
         System.out.println("Name: " + name);
         System.out.println("--------");
 
-        Client client1 = new Client(addr, port, name);
+        Client client1 = new Client(entities, addr, port, name);
         client1.start();
         Thread.sleep(5000);
-        Client client2 = new Client(addr, port, "anel-lol");
+        Client client2 = new Client(entities, addr, port, "anel-lol");
         client2.start();
+
+        Thread.sleep(5000);
+        for (Entity e : entities) {
+            if (e.typeString().equals("Player")) {
+            System.out.println("---------");
+            System.out.println(e.id);
+            System.out.println(e.typeString());
+            System.out.println(e.x);
+            System.out.println(e.y);
+            System.out.println(e.z);}
+        }
 
         System.out.println("Clients Started");
         client1.join();

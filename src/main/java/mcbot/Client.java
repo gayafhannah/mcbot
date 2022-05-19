@@ -1,6 +1,7 @@
 package mcbot;
 
 import mcbot.Serverbound;
+import mcbot.Entity;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,6 +15,7 @@ public class Client extends Thread{
     public int port;
     public String username;
     public int protocol = 758;
+    public ArrayList<Entity> entities;
 
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal
@@ -22,10 +24,11 @@ public class Client extends Thread{
     public double playerX, playerY, playerZ;
     public float playerHealth;
 
-    public Client(String _addr, int _port, String _username) {
+    public Client(ArrayList<Entity> _entities, String _addr, int _port, String _username) {
         addr = _addr;
         port = _port;
         username = _username;
+        entities = _entities;
     }
 
     public void run() {// throws IOException, DataFormatException {
@@ -138,13 +141,18 @@ public class Client extends Thread{
                 }
             } else { // If upgraded to Normal mode
                 switch (id) {
-                    case 0x00: // Spawn Non-Living Entity TODO
+                    case 0x00: // Spawn Non-Living Entity
+                        Clientbound.spawnEntity(this, entities, data);
                         break;
                     case 0x01: // Spawn XP Orb
                         break;
-                    case 0x02: // Spawn Living Entity TODO
+                    case 0x02: // Spawn Living Entity
+                        Clientbound.spawnEntity(this, entities, data);
                         break;
-                    case 0x04: // Spawn Another Player TODO
+                    case 0x03: // Spawn Painting
+                        break;
+                    case 0x04: // Spawn Another Player
+                        Clientbound.spawnPlayer(this, entities, data);
                         break;
                     case 0x05: // Skulk Vibration
                         break;
@@ -200,7 +208,7 @@ public class Client extends Thread{
                         break;
                     case 0x25: // Update Light Level
                         break;
-                    case 0x26: // Joined Game TODO SEND THINGS
+                    case 0x26: // Joined Game TODO Maybe send client status
                         Serverbound.chatMessage(this, "Hello cunts!");
                         Serverbound.chatMessage(this, "I am "+username);
                         break;

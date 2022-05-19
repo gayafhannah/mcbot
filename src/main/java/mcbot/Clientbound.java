@@ -2,7 +2,10 @@ package mcbot;
 
 import mcbot.Utilities;
 import mcbot.Client;
+import mcbot.Entity;
+
 import java.io.*;
+import java.util.*;
 import java.nio.ByteBuffer;
 
 public class Clientbound {
@@ -27,6 +30,63 @@ public class Clientbound {
     }
 
     //Normal mode
+
+    public static void spawnEntity(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x00 0x02
+        int id = Utilities.readVarInt(data);
+        data.skip(16);
+        int type = Utilities.readVarInt(data);
+        byte[] x = new byte[8];
+        byte[] y = new byte[8];
+        byte[] z = new byte[8];
+        data.read(x, 0, 8);
+        data.read(y, 0, 8);
+        data.read(z, 0, 8);
+        double xx = ByteBuffer.wrap(x).getDouble();
+        double yy = ByteBuffer.wrap(y).getDouble();
+        double zz = ByteBuffer.wrap(z).getDouble();
+
+        boolean exists = false;
+        for (Entity e : entities) {
+            if (entities.get(i).id == id) {exists = true;}
+        }
+        if (exists == false) {
+            Entity e = new Entity();
+            e.id = id;
+            e.type = type;
+            e.x = xx;
+            e.y = yy;
+            e.z = zz;
+            entities.add(e);
+        }
+    }
+
+    public static void spawnPlayer(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x04
+        int id = Utilities.readVarInt(data);
+        data.skip(16);
+        byte[] x = new byte[8];
+        byte[] y = new byte[8];
+        byte[] z = new byte[8];
+        data.read(x, 0, 8);
+        data.read(y, 0, 8);
+        data.read(z, 0, 8);
+        double xx = ByteBuffer.wrap(x).getDouble();
+        double yy = ByteBuffer.wrap(y).getDouble();
+        double zz = ByteBuffer.wrap(z).getDouble();
+
+        boolean exists = false;
+        for (Entity e : entities) {
+            if (e.id == id) {exists = true;}
+        }
+        if (exists == false) {
+            Entity e = new Entity();
+            e.id = id;
+            e.type = 111; // Player type
+            e.x = xx;
+            e.y = yy;
+            e.z = zz;
+            entities.add(e);
+        }
+    }
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
         System.out.print(Utilities.parseChat(Utilities.readString(data))); // TODO
