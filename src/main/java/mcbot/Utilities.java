@@ -66,4 +66,12 @@ public class Utilities {
         writeVarInt(length,outputStream);
         outputStream.write(s.getBytes("UTF-8"));
     }
+
+    public static String readString(ByteArrayInputStream inputStream) throws IOException {
+        int length = readVarInt(inputStream);
+        byte[] bytes = new byte[length];
+        inputStream.read(bytes, 0, length);
+        String s = new String(bytes, "UTF-8");
+        return s;
+    }
 }
