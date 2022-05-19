@@ -135,6 +135,8 @@ public class Client {
                         break;
                     case 0x04: // Spawn Another Player TODO
                         break;
+                    case 0x05: // Skulk Vibration
+                        break;
                     case 0x06: // Entity Animation
                         break;
                     case 0x0A: // Set Block entity data
@@ -142,6 +144,8 @@ public class Client {
                     case 0x0B: // Block action
                         break;
                     case 0x0C: // Query entity NBT
+                        break;
+                    case 0x0D: // Boss bar
                         break;
                     case 0x0E: // Difficulty
                         break;
@@ -158,7 +162,15 @@ public class Client {
                         break;
                     case 0x18: // Plugin Message
                         break;
+                    case 0x19: // Named Sound Effect
+                        break;
+                    case 0x1A: // Disconnect
+                        System.out.println("Server requested disconnect");
+                        alive = false;
+                        break;
                     case 0x1B: // Entity action
+                        break;
+                    case 0x1C: // Explosion
                         break;
                     case 0x1D: // Unload chunk
                         break;
@@ -180,11 +192,15 @@ public class Client {
                     case 0x26: // Joined Game TODO SEND THINGS
                         Serverbound.chatMessage(this, "Hello cunts!");
                         break;
+                    case 0x27: // Map Data
+                        break;
                     case 0x29: // Update Entity Position TODO Happens when player moves
                         break;
                     case 0x2A: // Update Entity Position and Rotation TODO Happens when player moves and looks
                         break;
                     case 0x2B: // Update Entity Rotation
+                        break;
+                    case 0x2C: // Vehicle Move
                         break;
                     case 0x32: // Player Abilities
                         break;
@@ -195,6 +211,8 @@ public class Client {
                     case 0x35: // Death event TODO
                         break;
                     case 0x36: // List of players TODO
+                        break;
+                    case 0x37: // Player Look
                         break;
                     case 0x38: // Player Position and Look
                         Clientbound.playerPosLook(this, data); //Must reply with Teleport Confirm
@@ -225,20 +243,28 @@ public class Client {
                         break;
                     case 0x4D: // Update Entity Metadata
                         break;
+                    case 0x4E: // Attach Entity (leash)
+                        break;
                     case 0x4F: // Entity Velocity
                         break;
                     case 0x50: // Entity Equiptment
                         break;
                     case 0x51: // Update XP Level
                         break;
+                    case 0x52: // Update player health
+                        Clientbound.updateHealth(this, data);
+                        break;
+                    case 0x54: // Set Passengers
+                        break;
                     case 0x57: // Set Simulationdistance
                         break;
                     case 0x59: // Update Time
                         break;
-                    case 0x52: // Update player health
-                        Clientbound.updateHealth(this, data);
+                    case 0x5C: // Entity Sound effect
                         break;
-                    case 0x5D: // Sound
+                    case 0x5D: // Sound effect
+                        break;
+                    case 0x5E: // Stop Sound
                         break;
                     case 0x61: // Item Picked Up (By anyone)
                         break;
