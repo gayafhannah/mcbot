@@ -15,7 +15,7 @@ public class Client extends Thread{
     public int port;
     public String username;
     public int protocol = 758;
-    public ArrayList<Entity> entities;
+    public ArrayList<Entity> entities = new ArrayList<Entity>();
 
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal
@@ -24,11 +24,10 @@ public class Client extends Thread{
     public double playerX, playerY, playerZ;
     public float playerHealth;
 
-    public Client(ArrayList<Entity> _entities, String _addr, int _port, String _username) {
+    public Client(String _addr, int _port, String _username) {
         addr = _addr;
         port = _port;
         username = _username;
-        entities = _entities;
     }
 
     public void run() {// throws IOException, DataFormatException {

@@ -19,7 +19,6 @@ public class Main {
         System.out.println("Minecraft Bot thing lmao!");
         System.out.println("--------");
 
-        ArrayList<Entity> entities = new ArrayList<Entity>();
         String addr = defaultAddress;
         int port = defaultPort;
         String name = defaultUsername;
@@ -44,28 +43,27 @@ public class Main {
         System.out.println("--------");
         System.out.println("Addr: " + addr);
         System.out.println("Port: " + port);
-        System.out.println("Name: " + name);
-        System.out.println("--------");
 
-        Client client1 = new Client(entities, addr, port, name);
-        client1.start();
-        Thread.sleep(5000);
-        Client client2 = new Client(entities, addr, port, "anel-lol");
-        client2.start();
+        String[] usernames = {"Cum", "UwU", "Awoo"};
 
-        Thread.sleep(5000);
-        for (Entity e : entities) {
-            if (e.typeString().equals("Player")) {
-            System.out.println("---------");
-            System.out.println(e.id);
-            System.out.println(e.typeString());
-            System.out.println(e.x);
-            System.out.println(e.y);
-            System.out.println(e.z);}
+        ArrayList<Client> clients = new ArrayList<Client>();
+        for (String u : usernames) {clients.add(new Client(addr, port, u));}
+        for (Client c : clients) {
+            System.out.printf("Starting %s\n",c.username);
+            c.start();
+            Thread.sleep(4500);
         }
 
-        System.out.println("Clients Started");
-        client1.join();
-        client2.join();
+        System.out.println("Clients Started. Starting monitor loop in 3s");
+        boolean running = true;
+        while (running) {
+            System.out.println("-----------------");
+            for (Client c : clients) {
+                System.out.printf("(%s) H:%.1f X:%.1f Y:%.1f Z:%.1f\n",c.username,c.playerHealth,c.playerX,c.playerY,c.playerZ);
+            }
+            running = false;
+            for (Client c : clients) {running |= c.isAlive();}
+            Thread.sleep(100);
+        }
     }
 }

@@ -47,7 +47,7 @@ public class Clientbound {
 
         boolean exists = false;
         for (Entity e : entities) {
-            if (entities.get(i).id == id) {exists = true;}
+            if (e.id == id) {exists = true;}
         }
         if (exists == false) {
             Entity e = new Entity();
