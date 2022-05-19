@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.zip.*;
 
-public class Client {
+public class Client extends Thread{
     public DataOutputStream dOut;
     public DataInputStream dIn;
     public String addr;
@@ -22,20 +22,27 @@ public class Client {
     public double playerX, playerY, playerZ;
     public float playerHealth;
 
-    public void Connect(String _addr, int _port, String _username) throws IOException, DataFormatException {
+    public Client(String _addr, int _port, String _username) {
         addr = _addr;
         port = _port;
         username = _username;
+    }
+
+    public void run() {// throws IOException, DataFormatException {
         System.out.printf("Connecting to %s:%d as %s\n", addr, port, username);
-        //Create initial socket connection + datasttreams
-        Socket sock = new Socket(addr,port);
-        dOut = new DataOutputStream(sock.getOutputStream());
-        dIn = new DataInputStream(sock.getInputStream());
-        //Start handshake
-        System.out.println("Starting handshake");
-        Serverbound.handshake(this);
-        Serverbound.login_start(this);
-        Listen();
+        try {
+            //Create initial socket connection + datasttreams
+            Socket sock = new Socket(addr,port);
+            dOut = new DataOutputStream(sock.getOutputStream());
+            dIn = new DataInputStream(sock.getInputStream());
+            //Start handshake
+            System.out.printf("<%s> Starting handshake\n", username);
+            Serverbound.handshake(this);
+            Serverbound.login_start(this);
+            Listen();
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
     }
 
     public void SendPacket(byte[] data) throws IOException {
@@ -101,6 +108,10 @@ public class Client {
         return result;
     }
 
+    public void log(String string) {
+        System.out.printf("<%s> %s\n", username, string);
+    }
+
     private void Listen() throws IOException, DataFormatException {
         ByteArrayInputStream data;
         int id;
@@ -123,7 +134,7 @@ public class Client {
                         Clientbound.setCompression(this, data);
                         break;
                     default:
-                        System.out.println("Unknown packet during Handshake");
+                        System.out.printf("<%s> Unknown packet during Handshake\n", username);
                 }
             } else { // If upgraded to Normal mode
                 switch (id) {
@@ -165,7 +176,7 @@ public class Client {
                     case 0x19: // Named Sound Effect
                         break;
                     case 0x1A: // Disconnect
-                        System.out.println("Server requested disconnect");
+                        System.out.printf("<%s> Server requested disconnect\n", username);
                         alive = false;
                         break;
                     case 0x1B: // Entity action
@@ -191,6 +202,7 @@ public class Client {
                         break;
                     case 0x26: // Joined Game TODO SEND THINGS
                         Serverbound.chatMessage(this, "Hello cunts!");
+                        Serverbound.chatMessage(this, "I am "+username);
                         break;
                     case 0x27: // Map Data
                         break;
@@ -281,7 +293,7 @@ public class Client {
                     case 0x67: // Declare tags
                         break;
                     default:
-                        System.out.printf("Unknown packet ID: %x", id);
+                        System.out.printf("<%s> Unknown packet ID: %x", username, id);
                         alive = false;
                         break;
                 }

@@ -14,7 +14,7 @@ public class Main {
     private static int defaultPort = 25565;
     private static String defaultUsername = "cunt";
 
-    public static void main(String[] args) throws IOException, DataFormatException {
+    public static void main(String[] args) throws IOException, DataFormatException, InterruptedException {
         System.out.println("Minecraft Bot thing lmao!");
         System.out.println("--------");
 
@@ -45,7 +45,14 @@ public class Main {
         System.out.println("Name: " + name);
         System.out.println("--------");
 
-        Client client1 = new Client();
-        client1.Connect(addr,port,name);
+        Client client1 = new Client(addr, port, name);
+        client1.start();
+        Thread.sleep(5000);
+        Client client2 = new Client(addr, port, "anel-lol");
+        client2.start();
+
+        System.out.println("Clients Started");
+        client1.join();
+        client2.join();
     }
 }

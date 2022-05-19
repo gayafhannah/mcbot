@@ -16,26 +16,26 @@ public class Clientbound {
     }
 
     public static void loginSuccess(Client client) {
-        System.out.println("Joined Server!");
+        System.out.printf("<%s> Joined Server!\n", client.username);
         client.mode = 1;
     }
 
     public static void setCompression(Client client, ByteArrayInputStream data) throws IOException {
         int compression = Utilities.readVarInt(data);
-        System.out.printf("Compression threshold set to: %d\n", compression);
+        System.out.printf("<%s> Compression threshold set to: %d\n", client.username, compression);
         client.compression = compression;
     }
 
     //Normal mode
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
-        System.out.println(Utilities.parseChat(Utilities.readString(data))); // TODO
+        //System.out.println(Utilities.parseChat(Utilities.readString(data))); // TODO
     }
 
     public static void keepalive(Client client, ByteArrayInputStream data) throws IOException { // 0x21
         byte[] id = new byte[8];
         data.read(id, 0, 8);
-        System.out.println("Recieved Keepalive.");
+        //System.out.printf("<%s> Recieved Keepalive.\n", client.username);
         Serverbound.keepalive(client, id);
     }
 
@@ -62,14 +62,14 @@ public class Clientbound {
         if ((flags & 0x04) != 0) {client.playerZ += zz;} else {client.playerZ = zz;}
         //Send response
         Serverbound.teleportConfirm(client, tID);
-        System.out.printf("X: %.1f Y: %.1f Z: %.1f\n", xx, yy, zz);
+        System.out.printf("<%s> X: %.1f Y: %.1f Z: %.1f\n", client.username, xx, yy, zz);
     }
 
     public static void updateHealth(Client client, ByteArrayInputStream data) throws IOException { // 0x52
         byte[] health = new byte[4];
         data.read(health, 0, 4);
         client.playerHealth = ByteBuffer.wrap(health).getFloat();
-        System.out.printf("Health: %.1f\n", client.playerHealth);
+        System.out.printf("<%s> Health: %.1f\n", client.username, client.playerHealth);
         if (client.playerHealth<=0.0) {
             Serverbound.clientStatus(client);
         }
