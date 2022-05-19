@@ -20,6 +20,7 @@ public class Client {
     public boolean alive = true;
 
     public double playerX, playerY, playerZ;
+    public float playerHealth;
 
     public void Connect(String _addr, int _port, String _username) throws IOException, DataFormatException {
         addr = _addr;
@@ -106,8 +107,8 @@ public class Client {
         while (alive) {
             data = new ByteArrayInputStream(RecievePacket());
             id = Utilities.readVarInt(data);
-            System.out.println("-----");
-            System.out.printf("Packet ID: %x\n", id);
+            //System.out.println("-----");
+            //System.out.printf("Packet ID: %2x\n", id);
 
             if (mode == 0) { // If still in Handshake Mode
                 switch (id) {
@@ -126,37 +127,135 @@ public class Client {
                 }
             } else { // If upgraded to Normal mode
                 switch (id) {
-                    case 0x00: // Spawn Entity
+                    case 0x00: // Spawn Non-Living Entity TODO
+                        break;
+                    case 0x01: // Spawn XP Orb
+                        break;
+                    case 0x02: // Spawn Living Entity TODO
+                        break;
+                    case 0x04: // Spawn Another Player TODO
+                        break;
+                    case 0x06: // Entity Animation
+                        break;
+                    case 0x0A: // Set Block entity data
+                        break;
+                    case 0x0B: // Block action
+                        break;
+                    case 0x0C: // Query entity NBT
                         break;
                     case 0x0E: // Difficulty
                         break;
-                    case 0x0F: // Chat Message
+                    case 0x0F: // Chat Message TODO
                         Clientbound.chatMessage(this, data);
                         break;
                     case 0x12: // Declare commands
+                        break;
+                    case 0x13: // Close Inventory Window
+                        break;
+                    case 0x14: // Update inventory/chest contents
+                        break;
+                    case 0x16: // Set inventory slot contents
                         break;
                     case 0x18: // Plugin Message
                         break;
                     case 0x1B: // Entity action
                         break;
-                    case 0x26: // Joined Game
+                    case 0x1D: // Unload chunk
+                        break;
+                    case 0x1E: // Change game state
+                        break;
+                    case 0x20: // Initialize World Border
+                        break;
+                    case 0x21: // Keepalive
+                        Clientbound.keepalive(this, data);
+                        break;
+                    case 0x22: // Chunk and Lighting Data
+                        break;
+                    case 0x23: // Particle/Sound Effect
+                        break;
+                    case 0x24: // Particle Effect
+                        break;
+                    case 0x25: // Update Light Level
+                        break;
+                    case 0x26: // Joined Game TODO SEND THINGS
                         Serverbound.chatMessage(this, "Hello cunts!");
                         break;
+                    case 0x29: // Update Entity Position TODO Happens when player moves
+                        break;
+                    case 0x2A: // Update Entity Position and Rotation TODO Happens when player moves and looks
+                        break;
+                    case 0x2B: // Update Entity Rotation
+                        break;
                     case 0x32: // Player Abilities
+                        break;
+                    case 0x33: // End combat event
+                        break;
+                    case 0x34: // Enter combat event
+                        break;
+                    case 0x35: // Death event TODO
+                        break;
+                    case 0x36: // List of players TODO
                         break;
                     case 0x38: // Player Position and Look
                         Clientbound.playerPosLook(this, data); //Must reply with Teleport Confirm
                         break;
                     case 0x39: // Unlock recipies
                         break;
+                    case 0x3A: // Destroy Entity TODO
+                        break;
+                    case 0x3B: // Remove Entity Effect
+                        break;
+                    case 0x3C: // Resource pack Send
+                        break;
+                    case 0x3D: // Respawn event
+                        break;
+                    case 0x3E: // Update Entity Head Look
+                        break;
+                    case 0x3F: // Multiple blocks change in one tick
+                        break;
                     case 0x48: // Currently selected hotbar slot
+                        break;
+                    case 0x49: // Update View Position (Chunk XY)
+                        break;
+                    case 0x4A: // Set Viewdistance
+                        break;
+                    case 0x4B: // Update World Spawnpoint
+                        break;
+                    case 0x4C: // Display scoreboard
+                        break;
+                    case 0x4D: // Update Entity Metadata
+                        break;
+                    case 0x4F: // Entity Velocity
+                        break;
+                    case 0x50: // Entity Equiptment
+                        break;
+                    case 0x51: // Update XP Level
+                        break;
+                    case 0x57: // Set Simulationdistance
+                        break;
+                    case 0x59: // Update Time
+                        break;
+                    case 0x52: // Update player health
+                        Clientbound.updateHealth(this, data);
+                        break;
+                    case 0x5D: // Sound
+                        break;
+                    case 0x61: // Item Picked Up (By anyone)
+                        break;
+                    case 0x62: // Entity Teleport TODO
+                        break;
+                    case 0x63: // Player Advancements
+                        break;
+                    case 0x64: // Update Entity Properties
+                        break;
+                    case 0x65: // Entity Effect
                         break;
                     case 0x66: // Declare crafting recipies
                         break;
                     case 0x67: // Declare tags
                         break;
                     default:
-                        System.out.println("Unknown packet");
+                        System.out.printf("Unknown packet ID: %x", id);
                         alive = false;
                         break;
                 }

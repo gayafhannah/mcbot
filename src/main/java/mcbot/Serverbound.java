@@ -38,4 +38,18 @@ public class Serverbound {
         Utilities.writeString(message, outputStream); //Chat message
         client.SendPacket(outputStream.toByteArray());
     }
+
+    public static void clientStatus(Client client) throws IOException { // 0x04
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x04, outputStream);
+        Utilities.writeVarInt(0, outputStream);
+        client.SendPacket(outputStream.toByteArray());
+    }
+
+    public static void keepalive(Client client, byte[] id) throws IOException { // 0x0F
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x0F, outputStream);
+        outputStream.write(id);
+        client.SendPacket(outputStream.toByteArray());
+    }
 }

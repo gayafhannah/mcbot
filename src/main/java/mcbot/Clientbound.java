@@ -29,7 +29,14 @@ public class Clientbound {
     //Normal mode
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
-        System.out.println(Utilities.parseChat(Utilities.readString(data)));
+        System.out.println(Utilities.parseChat(Utilities.readString(data))); // TODO
+    }
+
+    public static void keepalive(Client client, ByteArrayInputStream data) throws IOException { // 0x21
+        byte[] id = new byte[8];
+        data.read(id, 0, 8);
+        System.out.println("Recieved Keepalive.");
+        Serverbound.keepalive(client, id);
     }
 
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38
@@ -55,5 +62,16 @@ public class Clientbound {
         if ((flags & 0x04) != 0) {client.playerZ += zz;} else {client.playerZ = zz;}
         //Send response
         Serverbound.teleportConfirm(client, tID);
+        System.out.printf("X: %.1f Y: %.1f Z: %.1f\n", xx, yy, zz);
+    }
+
+    public static void updateHealth(Client client, ByteArrayInputStream data) throws IOException { // 0x52
+        byte[] health = new byte[4];
+        data.read(health, 0, 4);
+        client.playerHealth = ByteBuffer.wrap(health).getFloat();
+        System.out.printf("Health: %.1f\n", client.playerHealth);
+        if (client.playerHealth<=0.0) {
+            Serverbound.clientStatus(client);
+        }
     }
 }

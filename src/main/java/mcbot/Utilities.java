@@ -82,6 +82,6 @@ public class Utilities {
     public static String parseChat(String cMsg) {
         String message = "TODO"; // TODO
         //Pattern.matches("\"translate\":\".*\",\"");
-        return message;
+        return cMsg;
     }
 }
