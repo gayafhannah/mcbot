@@ -82,6 +82,12 @@ public class Utilities {
     public static String parseChat(String cMsg) {
         String message = "TODO"; // TODO
         //Pattern.matches("\"translate\":\".*\",\"");
-        return cMsg;
+        if (Pattern.matches("^\\{\"translate\":\"chat\\.type\\.text\",\"with\":\\[\\{\"text\":\".*\"},\\{\"text\":\".*\"}]}",cMsg)) { // If normal chat message with nothing special at all
+            String s = cMsg.substring(cMsg.indexOf("{\"text\":\"")+9, cMsg.indexOf("\"},{\"text"));
+            String m = cMsg.substring(cMsg.lastIndexOf("{\"text\":\"")+9, cMsg.lastIndexOf("\"}]}"));
+            message = String.format("[%s] %s\n", s, m);
+            return message;
+        }
+        return "";
     }
 }
