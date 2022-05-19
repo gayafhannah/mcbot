@@ -29,7 +29,7 @@ public class Clientbound {
     //Normal mode
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
-        System.out.println(Utilities.readString(data));
+        System.out.println(Utilities.parseChat(Utilities.readString(data)));
     }
 
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38

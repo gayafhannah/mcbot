@@ -45,12 +45,6 @@ public class Main {
         System.out.println("Name: " + name);
         System.out.println("--------");
 
-        /* Test Utilities.writeVarLong() because its weird and i had to cast stuff lol
-        OutputStream f = new FileOutputStream("test.bin");
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        Utilities.writeVarInt(129,b);
-        b.writeTo(f); */
-
         Client client1 = new Client();
         client1.Connect(addr,port,name);
     }

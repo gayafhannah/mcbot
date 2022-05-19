@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import java.util.regex.*;
+
 public class Utilities {
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
@@ -73,5 +75,13 @@ public class Utilities {
         inputStream.read(bytes, 0, length);
         String s = new String(bytes, "UTF-8");
         return s;
+    }
+
+
+    // Chat Parser
+    public static String parseChat(String cMsg) {
+        String message = "TODO"; // TODO
+        //Pattern.matches("\"translate\":\".*\",\"");
+        return message;
     }
 }
