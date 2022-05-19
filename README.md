@@ -6,6 +6,7 @@ A Minecraft bot thing lol.
  - Update entity position
  - Remove entities
  - Not double any instructions as entity Database is shared between clients
+   - Fixed by making entities db not global but instead per client
 ## World
  - Block storage
  - Implement basic falling so bot isnt stuck in the air, getting kicked for flying
