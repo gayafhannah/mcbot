@@ -241,6 +241,7 @@ public class Client extends Thread{
                     case 0x39: // Unlock recipies
                         break;
                     case 0x3A: // Destroy Entity TODO
+                        Clientbound.destroyEntity(this, entities, data);
                         break;
                     case 0x3B: // Remove Entity Effect
                         break;

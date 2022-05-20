@@ -135,6 +135,16 @@ public class Clientbound {
         System.out.printf("<%s> X: %.1f Y: %.1f Z: %.1f\n", client.username, xx, yy, zz);
     }
 
+    public static void destroyEntity(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x3A
+        int count = Utilities.readVarInt(data); // Gets number of entities in array to destroy
+        for (int i=0;i<count;i++) {
+            int id = Utilities.readVarInt(data); // Id of entity to destroy (remove from hashmap)
+            if (entities.get(id)!=null) { // Check if entity actually exists in hashmap
+                entities.remove(id); // Remove from hashmap
+            }
+        }
+    }
+
     public static void updateHealth(Client client, ByteArrayInputStream data) throws IOException { // 0x52
         byte[] health = new byte[4];
         data.read(health, 0, 4);

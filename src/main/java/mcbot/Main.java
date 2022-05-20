@@ -65,7 +65,7 @@ public class Main {
             Client tmp = null;
             for (Client c : clients) {if (c.isAlive()) {running = true;} else {tmp = c;}}//running |= c.isAlive();}
             clients.remove(tmp);
-            Thread.sleep(100);
+            Thread.sleep(10);
         }
     }
 }
