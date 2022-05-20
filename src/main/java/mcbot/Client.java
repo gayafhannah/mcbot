@@ -2,6 +2,7 @@ package mcbot;
 
 import mcbot.Serverbound;
 import mcbot.Entity;
+import mcbot.Inventory;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,12 +18,14 @@ public class Client extends Thread{
     public int protocol = 758;
 
     public HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>(); // Entity storage
+    public HashMap<Integer, Inventory> inventories = new HashMap<Integer, Inventory>();
     public Queue<String[]> workerJobs = new LinkedList<>();
     public Worker worker;
 
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal
     public boolean alive = true;
+    public int stateId;
 
     public double playerX, playerY, playerZ;
     public float playerHealth;
@@ -41,6 +44,7 @@ public class Client extends Thread{
             dOut = new DataOutputStream(sock.getOutputStream());
             dIn = new DataInputStream(sock.getInputStream());
             worker = new Worker(this);
+            inventories.put(0, new Inventory(-1));
             //Start handshake
             System.out.printf("<%s> Starting handshake\n", username);
             Serverbound.handshake(this);
@@ -178,10 +182,14 @@ public class Client extends Thread{
                     case 0x12: // Declare commands
                         break;
                     case 0x13: // Close Inventory Window TODO
+                        Clientbound.closeWindow(this, data);
+                        System.out.println("CJKREKJWSN");
                         break;
-                    case 0x14: // Update inventory/chest contents TODO
+                    case 0x14: // Update inventory/chest contents TODO TODO TODO CARRIED ITEM TODO
+                        Clientbound.windowItems(this, data);
                         break;
                     case 0x16: // Set inventory slot contents TODO
+                        Clientbound.updateSlot(this, data);
                         break;
                     case 0x18: // Plugin Message
                         break;
@@ -229,7 +237,8 @@ public class Client extends Thread{
                         break;
                     case 0x2C: // Vehicle Move
                         break;
-                    case 0x2E: // Open window TODO
+                    case 0x2E: // Open window TODO TODO TODO TODO
+                        Clientbound.windowOpen(this, data);
                         break;
                     case 0x32: // Player Abilities
                         break;

@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import mcbot.Client;
+import mcbot.Inventory;
 
 public class Worker extends Thread {
     Client client;
@@ -16,6 +17,7 @@ public class Worker extends Thread {
             String[] job;
             while (client.mode==0) {Thread.sleep(1000);}
             Serverbound.chatMessage(client, "Worker thread started on "+client.username);
+            Serverbound.useItem(client, 8, -60, 537);
             while (client.alive) {
                 job = client.workerJobs.poll();
                 if (job!=null) {
@@ -45,8 +47,18 @@ public class Worker extends Thread {
             Serverbound.playerRotation(client, yaw, pitch);
             Thread.sleep(50);
         }
+        for (int i : client.inventories.keySet()) {
+            Inventory j = client.inventories.get(i);
+            for (int k : j.slots.keySet()) {
+                Inventory.Slot s = j.slots.get(k);
+                if (s.hasItem) {
+                    System.out.printf("Window: %d Slot: %d Item ID: %d Item Count: %d\n", i, k, s.itemId, s.itemCount);
+                }
+            }
+        }
+        Serverbound.useItem(client, 8, -60, 537);
         for (int i=0;i<20;i++) {
-            System.out.printf("a:%.1f :%.1f\n",client.playerX, client.playerX + 0.10);
+            //System.out.printf("a:%.1f :%.1f\n",client.playerX, client.playerX + 0.10);
             Serverbound.playerPosition(client, client.playerX + 0.20, client.playerY, client.playerZ);
             Thread.sleep(50);
         }

@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import mcbot.Inventory;
+
 
 public class Utilities {
     private static final int SEGMENT_BITS = 0x7F;
@@ -86,5 +88,29 @@ public class Utilities {
         byte[] bytes = new byte[8];
         ByteBuffer.wrap(bytes).putDouble(value);
         return bytes;
+    }
+
+    public static Inventory.Slot readSlot(Inventory inventory, ByteArrayInputStream inputStream) throws IOException {
+        Inventory.Slot slot = inventory.newSlot();
+        slot.hasItem = (inputStream.read()!=0);
+        if (slot.hasItem) {
+            slot.itemId = readVarInt(inputStream);
+            slot.itemCount = (byte)inputStream.read();
+        }
+        return slot;
+    }
+
+    public static byte[] coordsToPosition(long x, long y, long z) {
+        long v = ((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF);
+        //System.out.printf("I X: %d Y: %d Z: %d\n",x,y,z);
+        //System.out.printf("O X: %d Y: %d Z: %d\n",(v>>38)&0x3FFFFFF,v&0xFFF,(v>>12)&0x3FFFFFF);
+/*       x = v>>38;
+        y = v&0xFFF;
+        z = (v>>12)&0x3fff;
+        if (x>=(1<<25)) {x-=1<<26;}
+        if (y>=(1<<11)) {y-=1<<12;}
+        if (z>=(1<<25)) {z-=1<<26;}*/
+        return ByteBuffer.allocate(8).putLong(v).array();
+ //       return ByteBuffer.allocate(8).putLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF)).array();
     }
 }

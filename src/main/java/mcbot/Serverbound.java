@@ -46,6 +46,13 @@ public class Serverbound {
         client.SendPacket(outputStream.toByteArray());
     }
 
+    public static void closeWindow(Client client, byte id) throws IOException { // 0x09
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x09, outputStream);
+        outputStream.write(id);
+        client.SendPacket(outputStream.toByteArray());
+    }
+
     public static void keepalive(Client client, byte[] id) throws IOException { // 0x0F
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Utilities.writeVarInt(0x0F, outputStream);
@@ -72,6 +79,19 @@ public class Serverbound {
         outputStream.write(Utilities.floatToByteArray(yaw));
         outputStream.write(Utilities.floatToByteArray(pitch));
         outputStream.write(0x01); // On Ground
+        client.SendPacket(outputStream.toByteArray());
+    }
+
+    public static void useItem(Client client, int blockX, int blockY, int blockZ) throws IOException { // 0x2E
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x2E, outputStream);
+        Utilities.writeVarInt(0, outputStream); // Assume Main hand (0 main, 1 offhand)
+        outputStream.writeBytes(Utilities.coordsToPosition(blockX, blockY, blockZ));
+        Utilities.writeVarInt(1, outputStream); // Assume top of block
+        outputStream.write(Utilities.floatToByteArray((float)0.0)); // Cursor position on block
+        outputStream.write(Utilities.floatToByteArray((float)1.0)); // Cursor position on block
+        outputStream.write(Utilities.floatToByteArray((float)0.0)); // Cursor position on block
+        outputStream.write(0x00); // Player isnt inside block
         client.SendPacket(outputStream.toByteArray());
     }
 }

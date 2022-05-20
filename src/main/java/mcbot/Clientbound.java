@@ -3,6 +3,7 @@ package mcbot;
 import mcbot.Utilities;
 import mcbot.Client;
 import mcbot.Entity;
+import mcbot.Inventory;
 
 import java.io.*;
 import java.util.*;
@@ -95,6 +96,37 @@ public class Clientbound {
         }
     }
 
+    public static void closeWindow(Client client, ByteArrayInputStream data) throws IOException { // 0x13
+        int id = (byte)data.read();
+        client.inventories.remove(id);
+        System.out.printf("C%d",id);
+    }
+
+    public static void windowItems(Client client, ByteArrayInputStream data) throws IOException { // 0x14
+        int wId = (byte)data.read();
+        client.stateId = Utilities.readVarInt(data);
+        int arraySize = Utilities.readVarInt(data);
+        Inventory inventory = client.inventories.get(wId);
+        if ((inventory==null)&&(wId==0)) {inventory = new Inventory(); client.inventories.put(0,new Inventory(-1));}
+        Inventory.Slot slot;
+        for (int i=0;i<arraySize;i++) {
+            slot = Utilities.readSlot(inventory, data);
+            inventory.slots.put(i,slot);
+        }
+    }
+
+    public static void updateSlot(Client client, ByteArrayInputStream data) throws IOException { // 0x16
+        int wId = (byte)data.read();
+        client.stateId = Utilities.readVarInt(data);
+        byte[] s = new byte[2];
+        data.read(s, 0, 2);
+        int slotId = ByteBuffer.wrap(s).getShort();
+        Inventory inventory = client.inventories.get(wId);
+        if ((inventory==null)&&(wId==0)) {inventory = new Inventory(); client.inventories.put(0,new Inventory(-1));}
+        Inventory.Slot slot = Utilities.readSlot(inventory, data);
+        inventory.slots.put(slotId, slot);
+    }
+
     public static void keepalive(Client client, ByteArrayInputStream data) throws IOException { // 0x21
         byte[] id = new byte[8];
         data.read(id, 0, 8);
@@ -120,6 +152,14 @@ public class Clientbound {
         e.z += zz;
     }
 
+    public static void windowOpen(Client client, ByteArrayInputStream data) throws IOException { // 0x2E
+        int wId = Utilities.readVarInt(data);
+        int wType = Utilities.readVarInt(data);
+        if (client.inventories.containsKey(wId)==false) {
+            client.inventories.put(wId, new Inventory(wType));
+        }
+    }
+
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38
         //Get the data
         byte[] x = new byte[8];
@@ -143,7 +183,7 @@ public class Clientbound {
         if ((flags & 0x04) != 0) {client.playerZ += zz;} else {client.playerZ = zz;}
         //Send response
         Serverbound.teleportConfirm(client, tID);
-        System.out.printf("<%s> X: %.1f Y: %.1f Z: %.1f\n", client.username, xx, yy, zz);
+        //System.out.printf("<%s> X: %.1f Y: %.1f Z: %.1f\n", client.username, xx, yy, zz);
     }
 
     public static void destroyEntity(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x3A
