@@ -99,6 +99,29 @@ public class Clientbound {
         Serverbound.keepalive(client, id);
     }
 
+    public static void entityPos(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
+        int id = Utilities.readVarInt(data);
+        byte[] x = new byte[2];
+        byte[] y = new byte[2];
+        byte[] z = new byte[2];
+        data.read(x, 0, 2);
+        data.read(y, 0, 2);
+        data.read(z, 0, 2);
+        double xx = (double)ByteBuffer.wrap(x).getShort() / (double)4096;
+        double yy = (double)ByteBuffer.wrap(y).getShort() / (double)4096;
+        double zz = (double)ByteBuffer.wrap(z).getShort() / (double)4096;
+        for (Entity e : entities) {
+            if (e.id == id) {
+                e.x += xx;
+                e.y += yy;
+                e.z += zz;
+                /*if (e.type==111) {
+                    System.out.printf("X:%.1f Y:%.1f Z:%.1f\n",e.x,e.y,e.z);
+                }*/
+            }
+        }
+    }
+
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38
         //Get the data
         byte[] x = new byte[8];

@@ -213,9 +213,11 @@ public class Client extends Thread{
                         break;
                     case 0x27: // Map Data
                         break;
-                    case 0x29: // Update Entity Position TODO Happens when player moves
+                    case 0x29: // Update Entity Position
+                        Clientbound.entityPos(this, entities, data);
                         break;
-                    case 0x2A: // Update Entity Position and Rotation TODO Happens when player moves and looks
+                    case 0x2A: // Update Entity Position and Rotation
+                        Clientbound.entityPos(this, entities, data);
                         break;
                     case 0x2B: // Update Entity Rotation
                         break;
