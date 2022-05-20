@@ -89,10 +89,21 @@ public class Clientbound {
             String m = cMsg.substring(cMsg.lastIndexOf("{\"text\":\"")+9, cMsg.lastIndexOf("\"}]}"));
             String message = String.format("[%s] %s\n", s, m);
             if (s.equals("Shoe_Eater")) {
-                String[] j = {"test",m};
-                client.workerJobs.add(j);
+                String[] j;
+                switch (m) {
+                    case "test":
+                        j = new String[] {"test",m};
+                        client.workerJobs.add(j);
+                        break;
+                    case "gay":
+                        j = new String[] {"gay",m};
+                        client.workerJobs.add(j);
+                        break;
+                    default:
+                        Serverbound.chatMessage(client, "Invalid command");
+                }
             }
-            System.out.println(message);
+            //System.out.println(message);
         }
     }
 

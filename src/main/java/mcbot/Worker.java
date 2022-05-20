@@ -5,6 +5,7 @@ import java.util.*;
 
 import mcbot.Client;
 import mcbot.Inventory;
+import mcbot.Entity;
 
 public class Worker extends Thread {
     Client client;
@@ -26,6 +27,9 @@ public class Worker extends Thread {
                         case "test":
                             testJob();
                             break;
+                        case "gay":
+                            gayJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job: " + job[0]);
                     }
@@ -39,7 +43,7 @@ public class Worker extends Thread {
         System.out.println("Stopped");
     }
 
-    private void testJob() throws IOException, InterruptedException{
+    private void testJob() throws IOException, InterruptedException {
         float yaw,pitch;
         for (int i=0;i<360;i+=15) {
             yaw = (float)i;
@@ -61,6 +65,12 @@ public class Worker extends Thread {
             //System.out.printf("a:%.1f :%.1f\n",client.playerX, client.playerX + 0.10);
             Serverbound.playerPosition(client, client.playerX + 0.20, client.playerY, client.playerZ);
             Thread.sleep(50);
+        }
+    }
+
+    private void gayJob() throws IOException, InterruptedException {
+        for (Entity e : client.entities.values()) {
+            Serverbound.interactEntity(client, e.id, 1, false);
         }
     }
 }

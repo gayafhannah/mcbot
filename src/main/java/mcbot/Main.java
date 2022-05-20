@@ -12,7 +12,7 @@ import java.util.zip.*;
 public class Main {
     //Default Server addr/port to use when no arguments used
     private static String defaultAddress = "nyaaa.daz.cat";
-    private static int defaultPort = 25565;
+    private static short defaultPort = 25565;
     private static String defaultUsername = "cunt";
 
     public static void main(String[] args) throws IOException, DataFormatException, InterruptedException {
@@ -20,7 +20,7 @@ public class Main {
         System.out.println("--------");
 
         String addr = defaultAddress;
-        int port = defaultPort;
+        short port = defaultPort;
         String name = defaultUsername;
 
         switch(args.length) {

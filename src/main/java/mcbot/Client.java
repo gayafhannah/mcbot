@@ -13,7 +13,7 @@ public class Client extends Thread{
     public DataOutputStream dOut;
     public DataInputStream dIn;
     public String addr;
-    public int port;
+    public short port;
     public String username;
     public int protocol = 758;
 
@@ -30,7 +30,7 @@ public class Client extends Thread{
     public double playerX, playerY, playerZ;
     public float playerHealth;
 
-    public Client(String _addr, int _port, String _username) {
+    public Client(String _addr, short _port, String _username) {
         addr = _addr;
         port = _port;
         username = _username;
@@ -183,7 +183,6 @@ public class Client extends Thread{
                         break;
                     case 0x13: // Close Inventory Window TODO
                         Clientbound.closeWindow(this, data);
-                        System.out.println("CJKREKJWSN");
                         break;
                     case 0x14: // Update inventory/chest contents TODO TODO TODO CARRIED ITEM TODO
                         Clientbound.windowItems(this, data);

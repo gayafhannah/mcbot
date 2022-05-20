@@ -3,6 +3,8 @@ package mcbot;
 import mcbot.Client;
 import mcbot.Utilities;
 import java.io.*;
+import java.util.*;
+import java.nio.ByteBuffer;
 
 public class Serverbound {
     // Handshaking Packets
@@ -11,9 +13,9 @@ public class Serverbound {
         Utilities.writeVarInt(0x00, outputStream);   //Packet ID 0x00
         Utilities.writeVarInt(client.protocol, outputStream);    //Protocol Number TODO Replace this
         Utilities.writeString(client.addr, outputStream); //Send Server IP
-        outputStream.write(client.port);    //Send Server Port
+        outputStream.write(ByteBuffer.allocate(2).putShort(client.port).array());    //Send Server Port
         Utilities.writeVarInt(2, outputStream); //Mode to login (1 - Status, 2 - Login)
-        Utilities.writeVarInt(2, outputStream); //Mode to login (1 - Status, 2 - Login) //DO NOT ASK WHY I HAVE TO DO THIS TWICE!!!
+        //Utilities.writeVarInt(2, outputStream); //Mode to login (1 - Status, 2 - Login) //DO NOT ASK WHY I HAVE TO DO THIS TWICE!!!
         client.SendPacket(outputStream.toByteArray());
     }
 
@@ -50,6 +52,15 @@ public class Serverbound {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Utilities.writeVarInt(0x09, outputStream);
         outputStream.write(id);
+        client.SendPacket(outputStream.toByteArray());
+    }
+
+    public static void interactEntity(Client client, int id, int type, boolean sneaking) throws IOException { // 0x0D
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x0D, outputStream);
+        Utilities.writeVarInt(id, outputStream);
+        Utilities.writeVarInt(type, outputStream); // 0 interact, 1 attack
+        outputStream.write(sneaking?1:0);
         client.SendPacket(outputStream.toByteArray());
     }
 
