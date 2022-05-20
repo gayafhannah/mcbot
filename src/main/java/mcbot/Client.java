@@ -223,6 +223,8 @@ public class Client extends Thread{
                         break;
                     case 0x2C: // Vehicle Move
                         break;
+                    case 0x2E: // Open window TODO
+                        break;
                     case 0x32: // Player Abilities
                         break;
                     case 0x33: // End combat event
@@ -290,7 +292,7 @@ public class Client extends Thread{
                         break;
                     case 0x61: // Item Picked Up (By anyone)
                         break;
-                    case 0x62: // Entity Teleport TODO
+                    case 0x62: // Entity Teleport
                         Clientbound.entityTeleport(this, entities, data);
                         break;
                     case 0x63: // Player Advancements
