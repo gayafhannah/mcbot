@@ -2,11 +2,8 @@
 A Minecraft bot thing lol.
 
 # TODO
-## Entities
- - Update entity position
- - Remove entities
- - Not double any instructions as entity Database is shared between clients
-   - Fixed by making entities db not global but instead per client
+## Misc
+ - Maybe add way for threads to concurrently access data from other clients
 ## World
  - Block storage
  - Implement basic falling so bot isnt stuck in the air, getting kicked for flying

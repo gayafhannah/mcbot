@@ -172,11 +172,11 @@ public class Client extends Thread{
                         break;
                     case 0x12: // Declare commands
                         break;
-                    case 0x13: // Close Inventory Window
+                    case 0x13: // Close Inventory Window TODO
                         break;
-                    case 0x14: // Update inventory/chest contents
+                    case 0x14: // Update inventory/chest contents TODO
                         break;
-                    case 0x16: // Set inventory slot contents
+                    case 0x16: // Set inventory slot contents TODO
                         break;
                     case 0x18: // Plugin Message
                         break;
@@ -240,7 +240,7 @@ public class Client extends Thread{
                         break;
                     case 0x39: // Unlock recipies
                         break;
-                    case 0x3A: // Destroy Entity TODO
+                    case 0x3A: // Destroy Entity
                         Clientbound.destroyEntity(this, entities, data);
                         break;
                     case 0x3B: // Remove Entity Effect
@@ -253,7 +253,7 @@ public class Client extends Thread{
                         break;
                     case 0x3F: // Multiple blocks change in one tick
                         break;
-                    case 0x48: // Currently selected hotbar slot
+                    case 0x48: // Currently selected hotbar slot TODO
                         break;
                     case 0x49: // Update View Position (Chunk XY)
                         break;
