@@ -70,6 +70,7 @@ public class Worker extends Thread {
 
     private void gayJob() throws IOException, InterruptedException {
         for (Entity e : client.entities.values()) {
+            if ((e.type==111)||(e.type==67))
             Serverbound.interactEntity(client, e.id, 1, false);
         }
     }
