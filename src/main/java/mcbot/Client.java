@@ -15,7 +15,7 @@ public class Client extends Thread{
     public int port;
     public String username;
     public int protocol = 758;
-    public ArrayList<Entity> entities = new ArrayList<Entity>();
+    public HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>();
 
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal

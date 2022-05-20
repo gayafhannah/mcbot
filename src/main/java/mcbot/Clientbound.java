@@ -31,7 +31,7 @@ public class Clientbound {
 
     //Normal mode
 
-    public static void spawnEntity(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x00 0x02
+    public static void spawnEntity(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x00 0x02
         int id = Utilities.readVarInt(data);
         data.skip(16);
         int type = Utilities.readVarInt(data);
@@ -45,22 +45,18 @@ public class Clientbound {
         double yy = ByteBuffer.wrap(y).getDouble();
         double zz = ByteBuffer.wrap(z).getDouble();
 
-        boolean exists = false;
-        for (Entity e : entities) {
-            if (e.id == id) {exists = true;}
-        }
-        if (exists == false) {
+        if (entities.containsKey(id) == false) {
             Entity e = new Entity();
             e.id = id;
             e.type = type;
             e.x = xx;
             e.y = yy;
             e.z = zz;
-            entities.add(e);
+            entities.put(id, e);
         }
     }
 
-    public static void spawnPlayer(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x04
+    public static void spawnPlayer(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x04
         int id = Utilities.readVarInt(data);
         data.skip(16);
         byte[] x = new byte[8];
@@ -73,18 +69,14 @@ public class Clientbound {
         double yy = ByteBuffer.wrap(y).getDouble();
         double zz = ByteBuffer.wrap(z).getDouble();
 
-        boolean exists = false;
-        for (Entity e : entities) {
-            if (e.id == id) {exists = true;}
-        }
-        if (exists == false) {
+        if (entities.containsKey(id) == false) {
             Entity e = new Entity();
             e.id = id;
             e.type = 111; // Player type
             e.x = xx;
             e.y = yy;
             e.z = zz;
-            entities.add(e);
+            entities.put(id, e);
         }
     }
 
@@ -99,7 +91,7 @@ public class Clientbound {
         Serverbound.keepalive(client, id);
     }
 
-    public static void entityPos(Client client, ArrayList<Entity> entities, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
+    public static void entityPos(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
         int id = Utilities.readVarInt(data);
         byte[] x = new byte[2];
         byte[] y = new byte[2];
@@ -110,16 +102,10 @@ public class Clientbound {
         double xx = (double)ByteBuffer.wrap(x).getShort() / (double)4096;
         double yy = (double)ByteBuffer.wrap(y).getShort() / (double)4096;
         double zz = (double)ByteBuffer.wrap(z).getShort() / (double)4096;
-        for (Entity e : entities) {
-            if (e.id == id) {
-                e.x += xx;
-                e.y += yy;
-                e.z += zz;
-                /*if (e.type==111) {
-                    System.out.printf("X:%.1f Y:%.1f Z:%.1f\n",e.x,e.y,e.z);
-                }*/
-            }
-        }
+        Entity e = entities.get(id);
+        e.x += xx;
+        e.y += yy;
+        e.z += zz;
     }
 
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38
