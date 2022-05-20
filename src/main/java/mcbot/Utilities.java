@@ -96,6 +96,9 @@ public class Utilities {
         if (slot.hasItem) {
             slot.itemId = readVarInt(inputStream);
             slot.itemCount = (byte)inputStream.read();
+            if (inputStream.read()!=0) {
+            //Cry
+            }
         }
         return slot;
     }
