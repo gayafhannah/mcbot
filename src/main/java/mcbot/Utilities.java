@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import java.util.regex.*;
 
 public class Utilities {
     private static final int SEGMENT_BITS = 0x7F;
@@ -77,17 +76,15 @@ public class Utilities {
         return s;
     }
 
+    public static byte[] floatToByteArray(float value) {
+        byte[] bytes = new byte[4];
+        ByteBuffer.wrap(bytes).putFloat(value);
+        return bytes;
+    }
 
-    // Chat Parser
-    public static String parseChat(String cMsg) {
-        String message = "TODO"; // TODO
-        //Pattern.matches("\"translate\":\".*\",\"");
-        if (Pattern.matches("^\\{\"translate\":\"chat\\.type\\.text\",\"with\":\\[\\{\"text\":\".*\"},\\{\"text\":\".*\"}]}",cMsg)) { // If normal chat message with nothing special at all
-            String s = cMsg.substring(cMsg.indexOf("{\"text\":\"")+9, cMsg.indexOf("\"},{\"text"));
-            String m = cMsg.substring(cMsg.lastIndexOf("{\"text\":\"")+9, cMsg.lastIndexOf("\"}]}"));
-            message = String.format("[%s] %s\n", s, m);
-            return message;
-        }
-        return "";
+    public static byte[] doubleToByteArray(double value) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putDouble(value);
+        return bytes;
     }
 }

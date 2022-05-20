@@ -1,10 +1,12 @@
 package mcbot;
 
+import java.util.*;
+
 public class Inventory {
     public byte windowId;
     public int numOfSlots;
     public int type;
-    public HashMap<Integer, Slot> slots = new HashMap<Integer, Slot>;
+    public HashMap<Integer, Slot> slots = new HashMap<Integer, Slot>();
 
     public int getSlotsFromType() { // Returns Special slots in window (chest slots, crafting slots, furnace slots)
                                     // next 27 slots after returned value are main inventory, 9 after that are hotbar
@@ -19,6 +21,8 @@ public class Inventory {
                 return 10;
             case 13: // Furnace
                 return 3;
+            default:
+                return 0;
         }
     }
 }

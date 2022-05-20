@@ -44,7 +44,7 @@ public class Main {
         System.out.println("Addr: " + addr);
         System.out.println("Port: " + port);
 
-        String[] usernames = {"Cum"};//, "UwU", "Awoo", "Blaaa", "stbhjgr", "b1", "b2", "b3", "b4"};
+        String[] usernames = {"Cummies"};//, "UwU", "Awoo", "Blaaa", "stbhjgr", "b1", "b2", "b3", "b4"};
 
         ArrayList<Client> clients = new ArrayList<Client>();
         for (String u : usernames) {clients.add(new Client(addr, port, u));}
@@ -65,7 +65,7 @@ public class Main {
             Client tmp = null;
             for (Client c : clients) {if (c.isAlive()) {running = true;} else {tmp = c;}}//running |= c.isAlive();}
             clients.remove(tmp);
-            Thread.sleep(10);
+            Thread.sleep(10000);
         }
     }
 }

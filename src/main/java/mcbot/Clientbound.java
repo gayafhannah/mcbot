@@ -7,6 +7,7 @@ import mcbot.Entity;
 import java.io.*;
 import java.util.*;
 import java.nio.ByteBuffer;
+import java.util.regex.*;
 
 public class Clientbound {
     // Handshake mode
@@ -81,7 +82,17 @@ public class Clientbound {
     }
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
-        System.out.print(Utilities.parseChat(Utilities.readString(data))); // TODO
+        String cMsg = Utilities.readString(data);
+        if (Pattern.matches("^\\{\"translate\":\"chat\\.type\\.text\",\"with\":\\[\\{\"text\":\".*\"},\\{\"text\":\".*\"}]}",cMsg)) { // If normal chat message with nothing special at all
+            String s = cMsg.substring(cMsg.indexOf("{\"text\":\"")+9, cMsg.indexOf("\"},{\"text"));
+            String m = cMsg.substring(cMsg.lastIndexOf("{\"text\":\"")+9, cMsg.lastIndexOf("\"}]}"));
+            String message = String.format("[%s] %s\n", s, m);
+            if (s.equals("Shoe_Eater")) {
+                String[] j = {"test",m};
+                client.workerJobs.add(j);
+            }
+            System.out.println(message);
+        }
     }
 
     public static void keepalive(Client client, ByteArrayInputStream data) throws IOException { // 0x21

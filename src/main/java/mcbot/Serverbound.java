@@ -52,4 +52,26 @@ public class Serverbound {
         outputStream.write(id);
         client.SendPacket(outputStream.toByteArray());
     }
+
+    public static void playerPosition(Client client, double x, double y, double z) throws IOException { // 0x11
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x11, outputStream);
+        client.playerX = x;
+        client.playerY = y;
+        client.playerZ = z;
+        outputStream.write(Utilities.doubleToByteArray(x));
+        outputStream.write(Utilities.doubleToByteArray(y));
+        outputStream.write(Utilities.doubleToByteArray(z));
+        outputStream.write(0x01); // On Ground
+        client.SendPacket(outputStream.toByteArray());
+    }
+
+    public static void playerRotation(Client client, float yaw, float pitch) throws IOException { // 0x13
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x13, outputStream);
+        outputStream.write(Utilities.floatToByteArray(yaw));
+        outputStream.write(Utilities.floatToByteArray(pitch));
+        outputStream.write(0x01); // On Ground
+        client.SendPacket(outputStream.toByteArray());
+    }
 }

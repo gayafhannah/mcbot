@@ -15,7 +15,10 @@ public class Client extends Thread{
     public int port;
     public String username;
     public int protocol = 758;
-    public HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>();
+
+    public HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>(); // Entity storage
+    public Queue<String[]> workerJobs = new LinkedList<>();
+    public Worker worker;
 
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal
@@ -37,13 +40,15 @@ public class Client extends Thread{
             Socket sock = new Socket(addr,port);
             dOut = new DataOutputStream(sock.getOutputStream());
             dIn = new DataInputStream(sock.getInputStream());
+            worker = new Worker(this);
             //Start handshake
             System.out.printf("<%s> Starting handshake\n", username);
             Serverbound.handshake(this);
             Serverbound.login_start(this);
             Listen();
+            System.out.printf("<%s> Stopping\n", username);
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            System.out.println("Exception: a" + e);
         }
     }
 
@@ -121,7 +126,7 @@ public class Client extends Thread{
             data = new ByteArrayInputStream(RecievePacket());
             id = Utilities.readVarInt(data);
             //System.out.println("-----");
-            //System.out.printf("Packet ID: %2x\n", id);
+            //System.out.printf("Packet ID: [%d]%2x\n", mode, id);
 
             if (mode == 0) { // If still in Handshake Mode
                 switch (id) {
@@ -210,6 +215,7 @@ public class Client extends Thread{
                     case 0x26: // Joined Game TODO Maybe send client status
                         Serverbound.chatMessage(this, "Hello cunts!");
                         Serverbound.chatMessage(this, "I am "+username);
+                        worker.start();
                         break;
                     case 0x27: // Map Data
                         break;
@@ -314,3 +320,4 @@ public class Client extends Thread{
         }
     }
 }
+
