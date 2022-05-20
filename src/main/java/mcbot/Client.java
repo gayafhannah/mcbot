@@ -291,6 +291,7 @@ public class Client extends Thread{
                     case 0x61: // Item Picked Up (By anyone)
                         break;
                     case 0x62: // Entity Teleport TODO
+                        Clientbound.entityTeleport(this, entities, data);
                         break;
                     case 0x63: // Player Advancements
                         break;

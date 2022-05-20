@@ -115,9 +115,9 @@ public class Clientbound {
         byte[] y = new byte[8];
         byte[] z = new byte[8];
         byte flags;
-        data.read(x,0,8);
-        data.read(y,0,8);
-        data.read(z,0,8);
+        data.read(x, 0, 8);
+        data.read(y, 0, 8);
+        data.read(z, 0, 8);
         data.skip(4); // Skip yaw
         data.skip(4); // Skip pitch
         flags = (byte)data.read();
@@ -153,5 +153,23 @@ public class Clientbound {
         if (client.playerHealth<=0.0) {
             Serverbound.clientStatus(client);
         }
+    }
+
+    public static void entityTeleport(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x62
+        byte[] x = new byte[8];
+        byte[] y = new byte[8];
+        byte[] z = new byte[8];
+        int id = Utilities.readVarInt(data);
+        data.read(x, 0, 8);
+        data.read(y, 0, 8);
+        data.read(z, 0, 8);
+        double xx = ByteBuffer.wrap(x).getDouble();
+        double yy = ByteBuffer.wrap(y).getDouble();
+        double zz = ByteBuffer.wrap(z).getDouble();
+        Entity e = entities.get(id);
+        if (e==null) {return;} // If entity does not exist in HashMap, do not update
+        e.x = xx;
+        e.y = yy;
+        e.z = zz;
     }
 }
