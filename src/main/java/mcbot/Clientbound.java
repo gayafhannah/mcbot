@@ -103,6 +103,7 @@ public class Clientbound {
         double yy = (double)ByteBuffer.wrap(y).getShort() / (double)4096;
         double zz = (double)ByteBuffer.wrap(z).getShort() / (double)4096;
         Entity e = entities.get(id);
+        if (e==null) {return;} // If entity does not exist in HashMap, do not update
         e.x += xx;
         e.y += yy;
         e.z += zz;
