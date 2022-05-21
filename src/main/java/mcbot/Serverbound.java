@@ -93,7 +93,7 @@ public class Serverbound {
         client.SendPacket(outputStream.toByteArray());
     }
 
-    public static void useItem(Client client, int blockX, int blockY, int blockZ) throws IOException { // 0x2E
+    public static void playerBlockPlacement(Client client, int blockX, int blockY, int blockZ) throws IOException { // 0x2E
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Utilities.writeVarInt(0x2E, outputStream);
         Utilities.writeVarInt(0, outputStream); // Assume Main hand (0 main, 1 offhand)
