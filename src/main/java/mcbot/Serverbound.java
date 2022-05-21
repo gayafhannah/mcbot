@@ -93,6 +93,16 @@ public class Serverbound {
         client.SendPacket(outputStream.toByteArray());
     }
 
+    public static void playerDigging(Client client, int status, int x, int y, int z) throws IOException { // 0x1A
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte face = 1; // Assume top of block, check docs for more info
+        Utilities.writeVarInt(0x1A, outputStream);
+        Utilities.writeVarInt(status, outputStream);
+        outputStream.writeBytes(Utilities.coordsToPosition(x, y, z));
+        outputStream.write(face);
+        client.SendPacket(outputStream.toByteArray());
+    }
+
     public static void playerBlockPlacement(Client client, int blockX, int blockY, int blockZ) throws IOException { // 0x2E
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         int hand = 0; // 0 main, 1 offhand

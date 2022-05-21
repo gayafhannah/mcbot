@@ -87,6 +87,7 @@ public class Worker extends Thread {
 
     private void useJob() throws IOException, InterruptedException {
         Serverbound.useItem(client);
-        Thread.sleep(500);
+        Thread.sleep(2000);
+        Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
     }
 }
