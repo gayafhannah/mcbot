@@ -90,15 +90,13 @@ public class Utilities {
         return bytes;
     }
 
-    public static Inventory.Slot readSlot(Inventory inventory, ByteArrayInputStream inputStream) throws IOException {
+    public static Inventory.Slot readSlot(Inventory inventory, ByteArrayInputStream inputStream) throws IOException, InterruptedException {
         Inventory.Slot slot = inventory.newSlot();
         slot.hasItem = (inputStream.read()!=0);
         if (slot.hasItem) {
             slot.itemId = readVarInt(inputStream);
             slot.itemCount = (byte)inputStream.read();
-            if (inputStream.read()!=0) {
-            //Cry
-            }
+            ignoreNBT(inputStream);
         }
         return slot;
     }
@@ -115,5 +113,156 @@ public class Utilities {
         if (z>=(1<<25)) {z-=1<<26;}*/
         return ByteBuffer.allocate(8).putLong(v).array();
  //       return ByteBuffer.allocate(8).putLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF)).array();
+    }
+
+    public static void ignoreNBT(ByteArrayInputStream inputStream) throws IOException, InterruptedException {
+        byte tag = (byte)inputStream.read();
+        //System.out.println("e"+tag);
+        if (tag==(byte)0x0A) { //NBT Starts with TAG_Compound
+            byte[] nameLengthBytes = new byte[2];
+            inputStream.read(nameLengthBytes, 0, 2);
+            short nameLength = ByteBuffer.wrap(nameLengthBytes).getShort();
+            inputStream.skip(nameLength);
+            ignoreNBTCompound(inputStream);
+            return;
+        } else {
+            return; //NBT Starts with TAG_End
+        }
+    }
+    private static void ignoreNBTCompound(ByteArrayInputStream inputStream) throws IOException, InterruptedException {
+        byte[] nameLengthBytes = new byte[2];
+        int nameLength;
+        byte tag = 0x0A;
+        do {
+            //Thread.sleep(100);
+            tag = (byte)inputStream.read();
+            //System.out.println("c"+tag);
+            if (tag==(byte)0) {return;}
+            nameLengthBytes = new byte[2];
+            inputStream.read(nameLengthBytes, 0, 2);
+            nameLength = ByteBuffer.wrap(nameLengthBytes).getShort();
+            inputStream.skip(nameLength);
+            switch (tag) {
+                case 0x01: // TAG_Byte
+                    ignoreNBTByte(inputStream);
+                    break;
+                case 0x02: // TAG_Short
+                    ignoreNBTShort(inputStream);
+                    break;
+                case 0x03: // TAG_Int
+                    ignoreNBTInt(inputStream);
+                    break;
+                case 0x04: // TAG_Long
+                    ignoreNBTLong(inputStream);
+                    break;
+                case 0x05: // TAG_Float
+                    ignoreNBTFloat(inputStream);
+                    break;
+                case 0x06: // TAG_Double
+                    ignoreNBTDouble(inputStream);
+                    break;
+                case 0x07: // TAG_Byte_Array
+                    ignoreNBTByteArray(inputStream);
+                    break;
+                case 0x08: // TAG_String
+                    ignoreNBTString(inputStream);
+                    break;
+                case 0x09: // TAG_List
+                    ignoreNBTList(inputStream);
+                    break;
+                case 0x0A: // TAG_Compound
+                    ignoreNBTCompound(inputStream);
+                    break;
+                case 0x0B: // TAG_Int_Array
+                    ignoreNBTIntArray(inputStream);
+                    break;
+                case 0x0C: // TAG_Long_Array
+                    ignoreNBTLongArray(inputStream);
+                    break;
+                default:
+                    break;
+            }
+        } while (tag!=(byte)0);
+    }
+    public static void ignoreNBTByte(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(1);}
+    public static void ignoreNBTShort(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(2);}
+    public static void ignoreNBTInt(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(4);}
+    public static void ignoreNBTLong(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(8);}
+    public static void ignoreNBTFloat(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(4);}
+    public static void ignoreNBTDouble(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(8);}
+    public static void ignoreNBTByteArray(ByteArrayInputStream inputStream) throws IOException {
+        byte[] nameLengthBytes = new byte[4];
+        inputStream.read(nameLengthBytes, 0, 4);
+        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
+        inputStream.skip(nameLength);
+    }
+    public static void ignoreNBTString(ByteArrayInputStream inputStream) throws IOException {
+        byte[] nameLengthBytes = new byte[2];
+        inputStream.read(nameLengthBytes, 0, 2);
+        short nameLength = ByteBuffer.wrap(nameLengthBytes).getShort();
+        inputStream.skip(nameLength);
+        //System.out.println("s"+nameLength);
+    }
+    public static void ignoreNBTList(ByteArrayInputStream inputStream) throws IOException, InterruptedException {
+        byte tag = (byte)inputStream.read(); // was .skip(1)
+        byte[] nameLengthBytes = new byte[4];
+        inputStream.read(nameLengthBytes, 0, 4);
+        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
+        //System.out.println(tag+"a"+nameLength);
+        for (int i=0;i<nameLength;i++) {
+            //System.out.println("l"+tag);
+            switch (tag) {
+                case 0x01: // TAG_Byte
+                    ignoreNBTByte(inputStream);
+                    break;
+                case 0x02: // TAG_Short
+                    ignoreNBTShort(inputStream);
+                    break;
+                case 0x03: // TAG_Int
+                    ignoreNBTInt(inputStream);
+                    break;
+                case 0x04: // TAG_Long
+                    ignoreNBTLong(inputStream);
+                    break;
+                case 0x05: // TAG_Float
+                    ignoreNBTFloat(inputStream);
+                    break;
+                case 0x06: // TAG_Double
+                    ignoreNBTDouble(inputStream);
+                    break;
+                case 0x07: // TAG_Byte_Array
+                    ignoreNBTByteArray(inputStream);
+                    break;
+                case 0x08: // TAG_String
+                    ignoreNBTString(inputStream);
+                    break;
+                case 0x09: // TAG_List
+                    ignoreNBTList(inputStream);
+                    break;
+                case 0x0A: // TAG_Compound
+                    ignoreNBTCompound(inputStream);
+                    break;
+                case 0x0B: // TAG_Int_Array
+                    ignoreNBTIntArray(inputStream);
+                    break;
+                case 0x0C: // TAG_Long_Array
+                    ignoreNBTLongArray(inputStream);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    public static void ignoreNBTIntArray(ByteArrayInputStream inputStream) throws IOException {
+        byte[] nameLengthBytes = new byte[4];
+        inputStream.read(nameLengthBytes, 0, 4);
+        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
+        inputStream.skip(nameLength*4);
+    }
+    public static void ignoreNBTLongArray(ByteArrayInputStream inputStream) throws IOException {
+        byte[] nameLengthBytes = new byte[4];
+        inputStream.read(nameLengthBytes, 0, 4);
+        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
+        inputStream.skip(nameLength*8);
     }
 }

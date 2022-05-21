@@ -117,7 +117,7 @@ public class Clientbound {
         System.out.printf("C%d",id);
     }
 
-    public static void windowItems(Client client, ByteArrayInputStream data) throws IOException { // 0x14
+    public static void windowItems(Client client, ByteArrayInputStream data) throws IOException, InterruptedException { // 0x14
         int wId = (byte)data.read();
         client.stateId = Utilities.readVarInt(data);
         int arraySize = Utilities.readVarInt(data);
@@ -130,7 +130,7 @@ public class Clientbound {
         }
     }
 
-    public static void updateSlot(Client client, ByteArrayInputStream data) throws IOException { // 0x16
+    public static void updateSlot(Client client, ByteArrayInputStream data) throws IOException, InterruptedException { // 0x16
         int wId = (byte)data.read();
         client.stateId = Utilities.readVarInt(data);
         byte[] s = new byte[2];

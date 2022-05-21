@@ -123,7 +123,7 @@ public class Client extends Thread{
         System.out.printf("<%s> %s\n", username, string);
     }
 
-    private void Listen() throws IOException, DataFormatException {
+    private void Listen() throws IOException, DataFormatException, InterruptedException {
         ByteArrayInputStream data;
         int id;
         while (alive) {

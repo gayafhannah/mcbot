@@ -58,7 +58,7 @@ public class Worker extends Thread {
             for (int k : j.slots.keySet()) {
                 Inventory.Slot s = j.slots.get(k);
                 if (s.hasItem) {
-                    System.out.printf("Window: %d Slot: %d Item ID: %d Item Count: %d\n", i, k, s.itemId, s.itemCount);
+                    System.out.printf("<%s> Window: %d Slot: %d Item ID: %d Item Count: %d\n", client.username, i, k, s.itemId, s.itemCount);
                 }
             }
         }
