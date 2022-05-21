@@ -86,8 +86,11 @@ public class Worker extends Thread {
     }
 
     private void useJob() throws IOException, InterruptedException {
-        Serverbound.useItem(client);
-        Thread.sleep(2000);
-        Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
+        //Serverbound.useItem(client);
+        //Thread.sleep(2000);
+        //Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
+        Action.shootBow(client, -7, -59, 537);
+        Action.shootBow(client, -14, -59, 530);
+        Action.shootBow(client, -7, -56, 524);
     }
 }

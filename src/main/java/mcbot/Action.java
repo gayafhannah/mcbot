@@ -6,16 +6,69 @@ import java.io.*;
 import java.util.*;
 
 public class Action {
-    public void eatFood(Client client) {
+    public static void dumpInventory(Client client) throws IOException, InterruptedException {
+        
+    }
+
+    public static void eatFood(Client client) throws IOException, InterruptedException {
         Serverbound.useItem(client);
         Thread.sleep(2000);
         Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
     }
 
-    public void shootBow(Client client, double x, double y, double z) {
+    public static void shootBow(Client client, double x, double y, double z) throws IOException, InterruptedException {
+        double dx = x-client.playerX;
+        double dy = y-client.playerY;
+        double dz = z-client.playerZ;
+        double h = Math.sqrt(dx*dx + dz*dz);
+        Double pitchR = shootBowGetPitch(h, dy, 3, 0.01, 0.05); // 3 is velocity, 0.01 is drag, 0.05 is gravity
+        if (pitchR==null) {Serverbound.chatMessage(client, "Cannot shoot target");return;}
+        double pitch = Math.toDegrees(pitchR);
+        float yaw = (float)(360 - Math.toDegrees(Math.atan2(x-client.playerX,z-client.playerZ))) % (float)360;
         Serverbound.useItem(client);
-        //Calculate angle and trejectory and Rotate player TODO
-        Thread.sleep(1.15);
+        Thread.sleep(50);
+        Serverbound.playerRotation(client, yaw, (float)-pitch);
+        Thread.sleep(1100);
         Serverbound.playerDigging(client, 5, 0, 0, 0);
     }
+    private static Double shootBowGetPitch(double tx, double ty, double v, double d, double g) { // Used purely for shootBow
+        // If it's near the asymptotes, just return a vertical angle
+        if (tx < ty * 0.001) {
+            return ty>0 ? Math.PI/2.0 : -Math.PI/2.0;
+        }
+
+        double md = 1.0-d;
+        double log_md = Math.log(md);
+        double g_d = g/d; // This is terminal velocity
+        double theta = Math.atan2(ty, tx);
+        double prev_abs_ydif = Double.POSITIVE_INFINITY;
+
+        // 20 iterations max, although it usually converges in 3 iterations
+        for (int i=0; i<20; i++) {
+            //System.out.println(i);
+            double cost = Math.cos(theta);
+            double sint = Math.sin(theta);
+            double tant = sint/cost;
+            double vx = v * cost;
+            double vy = v * sint;
+            double y = tx*(g_d+vy)/vx - g_d*Math.log(1-d*tx/vx)/log_md;
+            double ydif = y-ty;
+            double abs_ydif = Math.abs(ydif);
+
+            // If it's getting farther away, there's probably no solution
+            if (abs_ydif>prev_abs_ydif) {
+                return null;
+            }
+            else if (abs_ydif < 0.0001) {
+                return theta;
+            }
+
+            double dy_dtheta = tx + g*tx*tant / ((-d*tx+v*cost)*log_md) + g*tx*tant/(d*v*cost) + tx*tant*tant;
+            theta -= ydif/dy_dtheta;
+            prev_abs_ydif = abs_ydif;
+        }
+
+        // If exceeded max iterations, return null
+        return null;
+        }
 }
