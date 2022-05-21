@@ -6,10 +6,6 @@ import java.io.*;
 import java.util.*;
 
 public class Action {
-    public static void dumpInventory(Client client) throws IOException, InterruptedException {
-        
-    }
-
     public static void eatFood(Client client) throws IOException, InterruptedException {
         Serverbound.useItem(client);
         Thread.sleep(2000);
