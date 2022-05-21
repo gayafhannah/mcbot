@@ -70,8 +70,16 @@ public class Worker extends Thread {
 
     private void gayJob() throws IOException, InterruptedException {
         for (Entity e : client.entities.values()) {
-            if ((e.type==111)||(e.type==67))
-            Serverbound.interactEntity(client, e.id, 1, false);
+            if ((e.type==111)||(e.type==67)) {
+                double y = client.playerY;
+                Serverbound.playerPosition(client, client.playerX, y+0.1, client.playerZ);
+                Thread.sleep(200);
+                Serverbound.playerPosition(client, client.playerX, y+0.5, client.playerZ);
+                Thread.sleep(200);
+                Serverbound.interactEntity(client, e.id, 1, false);
+                Serverbound.playerPosition(client, client.playerX, y, client.playerZ);
+                Thread.sleep(200);
+            }
         }
     }
 }
