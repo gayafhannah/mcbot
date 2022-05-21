@@ -95,14 +95,24 @@ public class Serverbound {
 
     public static void playerBlockPlacement(Client client, int blockX, int blockY, int blockZ) throws IOException { // 0x2E
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        int hand = 0; // 0 main, 1 offhand
+        int face = 1; // Assume top of block, check docs for more info
         Utilities.writeVarInt(0x2E, outputStream);
-        Utilities.writeVarInt(0, outputStream); // Assume Main hand (0 main, 1 offhand)
+        Utilities.writeVarInt(hand, outputStream);
         outputStream.writeBytes(Utilities.coordsToPosition(blockX, blockY, blockZ));
-        Utilities.writeVarInt(1, outputStream); // Assume top of block
+        Utilities.writeVarInt(face, outputStream);
         outputStream.write(Utilities.floatToByteArray((float)0.0)); // Cursor position on block
         outputStream.write(Utilities.floatToByteArray((float)1.0)); // Cursor position on block
         outputStream.write(Utilities.floatToByteArray((float)0.0)); // Cursor position on block
         outputStream.write(0x00); // Player isnt inside block
+        client.SendPacket(outputStream.toByteArray());
+    }
+
+    public static void useItem(Client client) throws IOException { // 0x2F
+        int hand = 0; // 0 main, 1 offhand
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Utilities.writeVarInt(0x2F, outputStream);
+        Utilities.writeVarInt(hand, outputStream);
         client.SendPacket(outputStream.toByteArray());
     }
 }

@@ -29,6 +29,9 @@ public class Worker extends Thread {
                         case "gay":
                             gayJob();
                             break;
+                        case "use":
+                            useJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job: " + job[0]);
                     }
@@ -80,5 +83,10 @@ public class Worker extends Thread {
                 Thread.sleep(200);
             }
         }
+    }
+
+    private void useJob() throws IOException, InterruptedException {
+        Serverbound.useItem(client);
+        Thread.sleep(500);
     }
 }

@@ -99,6 +99,10 @@ public class Clientbound {
                         j = new String[] {"gay",m};
                         client.workerJobs.add(j);
                         break;
+                    case "use":
+                        j = new String[] {"use",m};
+                        client.workerJobs.add(j);
+                        break;
                     default:
                         Serverbound.chatMessage(client, "Invalid command");
                 }
