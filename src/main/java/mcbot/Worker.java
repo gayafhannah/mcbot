@@ -35,6 +35,9 @@ public class Worker extends Thread {
                         case "dig":
                             digJob();
                             break;
+                        case "target":
+                            targetJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job!" + job[0]);
                     }
@@ -92,10 +95,16 @@ public class Worker extends Thread {
         //Serverbound.useItem(client);
         //Thread.sleep(2000);
         //Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
-        Action.shootBow(client, -7, -59, 537);
-        Action.shootBow(client, -14, -59, 530);
-        Action.shootBow(client, -7, -56, 524);
-        Action.shootBow(client, -21, -51, 539);
+        Action.shootBow(client, true, -7, -59, 537);
+        Action.shootBow(client, true, -14, -59, 530);
+        Action.shootBow(client, true, -7, -56, 524);
+        Action.shootBow(client, true, -21, -51, 539);
+    }
+
+    private void targetJob() throws IOException, InterruptedException {
+        for (Entity e : client.entities.values()) {
+            if (e.type==1) {Action.shootBow(client, false, e.x, e.y+0.5, e.z);}
+        }
     }
 
     private void digJob() throws IOException, InterruptedException {
