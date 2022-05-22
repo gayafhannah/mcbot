@@ -21,7 +21,7 @@ public class Worker extends Thread {
             while (client.alive) {
                 job = client.workerJobs.poll();
                 if (job!=null) {
-                    Serverbound.chatMessage(client, "Doing Job: " + job[0]);
+                    Serverbound.chatMessage(client, "Starting Job: " + job[0]);
                     switch (job[0]) {
                         case "test":
                             testJob();
@@ -36,7 +36,7 @@ public class Worker extends Thread {
                             digJob();
                             break;
                         default:
-                            Serverbound.chatMessage(client, "Invalid Job: " + job[0]);
+                            Serverbound.chatMessage(client, "Invalid Job!" + job[0]);
                     }
                     Serverbound.chatMessage(client, "Done Job");
                 }
@@ -95,6 +95,7 @@ public class Worker extends Thread {
         Action.shootBow(client, -7, -59, 537);
         Action.shootBow(client, -14, -59, 530);
         Action.shootBow(client, -7, -56, 524);
+        Action.shootBow(client, -21, -51, 539);
     }
 
     private void digJob() throws IOException, InterruptedException {

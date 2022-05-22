@@ -44,7 +44,7 @@ public class Main {
         System.out.println("Addr: " + addr);
         System.out.println("Port: " + port);
 
-        String[] usernames = {"Cummies","Nya"};//, "UwU", "Awoo", "Blaaa", "stbhjgr", "b1", "b2", "b3", "b4"};
+        String[] usernames = {"Nya"};//,"Cummies"};//, "UwU", "Awoo", "Blaaa", "stbhjgr", "b1", "b2", "b3", "b4"};
 
         ArrayList<Client> clients = new ArrayList<Client>();
         for (String u : usernames) {clients.add(new Client(addr, port, u));}

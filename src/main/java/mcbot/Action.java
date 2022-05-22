@@ -13,6 +13,11 @@ public class Action {
     }
 
     public static void shootBow(Client client, double x, double y, double z) throws IOException, InterruptedException {
+        final double centreOffset = 0.5; // Offset to aim for centre of block
+        final double playerEyeHeightOffset = 1.62; // Offset for arrow coming out of player's eyes rather than true Y pos
+        x+=centreOffset;
+        y+=centreOffset - playerEyeHeightOffset;
+        z+=centreOffset;
         double dx = x-client.playerX;
         double dy = y-client.playerY;
         double dz = z-client.playerZ;
