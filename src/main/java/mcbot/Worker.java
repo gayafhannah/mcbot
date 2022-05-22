@@ -103,7 +103,7 @@ public class Worker extends Thread {
 
     private void targetJob() throws IOException, InterruptedException {
         for (Entity e : client.entities.values()) {
-            if (e.type==1) {Action.shootBow(client, false, e.x, e.y+0.5, e.z);}
+            if (e.type==1) {Action.shootBow(client, false, e.x, e.y-0.5, e.z);}
         }
     }
 

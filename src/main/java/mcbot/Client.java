@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.zip.*;
+import java.util.concurrent.*;
 
 public class Client extends Thread{
     public DataOutputStream dOut;
@@ -17,7 +18,7 @@ public class Client extends Thread{
     public String username;
     public int protocol = 758;
 
-    public HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>(); // Entity storage
+    public ConcurrentHashMap<Integer, Entity> entities = new ConcurrentHashMap<Integer, Entity>(); // Entity storage
     public HashMap<Integer, Inventory> inventories = new HashMap<Integer, Inventory>();
     public Queue<String[]> workerJobs = new LinkedList<>();
     public Worker worker;
