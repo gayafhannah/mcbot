@@ -32,6 +32,9 @@ public class Worker extends Thread {
                         case "use":
                             useJob();
                             break;
+                        case "dig":
+                            digJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job: " + job[0]);
                     }
@@ -92,5 +95,9 @@ public class Worker extends Thread {
         Action.shootBow(client, -7, -59, 537);
         Action.shootBow(client, -14, -59, 530);
         Action.shootBow(client, -7, -56, 524);
+    }
+
+    private void digJob() throws IOException, InterruptedException {
+        Action.digBlock(client, -21, -53, 539);
     }
 }

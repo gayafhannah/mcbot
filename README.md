@@ -19,3 +19,5 @@ A Minecraft bot thing lol.
  - Do this with chests
  - Craft
  - IMPORTANT PARSE NBT
+## Actions
+ - Experiment with adding ~1.7 as y offset to bowShoot funciton to account for player's head being that high above playerY pos

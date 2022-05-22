@@ -66,5 +66,11 @@ public class Action {
 
         // If exceeded max iterations, return null
         return null;
-        }
+    }
+
+    public static void digBlock(Client client, int x, int y, int z) throws IOException, InterruptedException {
+        Serverbound.playerDigging(client, 0, x, y, z); // TODO Add timeout testing
+        Thread.sleep(1500);
+        Serverbound.playerDigging(client, 2, x, y, z);
+    }
 }

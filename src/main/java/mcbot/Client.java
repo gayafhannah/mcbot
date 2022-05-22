@@ -166,6 +166,10 @@ public class Client extends Thread{
                         break;
                     case 0x06: // Entity Animation
                         break;
+                    case 0x08: // Acknowledge Digging TODO Set Flag for digBlock action
+                        break;
+                    case 0x09: // Block Break Animation
+                        break;
                     case 0x0A: // Set Block entity data
                         break;
                     case 0x0B: // Block action
