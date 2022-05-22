@@ -150,17 +150,17 @@ public class Client extends Thread{
             } else { // If upgraded to Normal mode
                 switch (id) {
                     case 0x00: // Spawn Non-Living Entity
-                        Clientbound.spawnEntity(this, entities, data);
+                        Clientbound.spawnEntity(this, data);
                         break;
                     case 0x01: // Spawn XP Orb
                         break;
                     case 0x02: // Spawn Living Entity
-                        Clientbound.spawnEntity(this, entities, data);
+                        Clientbound.spawnEntity(this, data);
                         break;
                     case 0x03: // Spawn Painting
                         break;
                     case 0x04: // Spawn Another Player
-                        Clientbound.spawnPlayer(this, entities, data);
+                        Clientbound.spawnPlayer(this, data);
                         break;
                     case 0x05: // Skulk Vibration
                         break;
@@ -231,10 +231,10 @@ public class Client extends Thread{
                     case 0x27: // Map Data
                         break;
                     case 0x29: // Update Entity Position
-                        Clientbound.entityPos(this, entities, data);
+                        Clientbound.entityPos(this, data);
                         break;
                     case 0x2A: // Update Entity Position and Rotation
-                        Clientbound.entityPos(this, entities, data);
+                        Clientbound.entityPos(this, data);
                         break;
                     case 0x2B: // Update Entity Rotation
                         break;
@@ -261,7 +261,7 @@ public class Client extends Thread{
                     case 0x39: // Unlock recipies
                         break;
                     case 0x3A: // Destroy Entity
-                        Clientbound.destroyEntity(this, entities, data);
+                        Clientbound.destroyEntity(this, data);
                         break;
                     case 0x3B: // Remove Entity Effect
                         break;
@@ -311,7 +311,7 @@ public class Client extends Thread{
                     case 0x61: // Item Picked Up (By anyone)
                         break;
                     case 0x62: // Entity Teleport
-                        Clientbound.entityTeleport(this, entities, data);
+                        Clientbound.entityTeleport(this, data);
                         break;
                     case 0x63: // Player Advancements
                         break;

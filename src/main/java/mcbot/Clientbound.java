@@ -33,7 +33,7 @@ public class Clientbound {
 
     //Normal mode
 
-    public static void spawnEntity(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x00 0x02
+    public static void spawnEntity(Client client, ByteArrayInputStream data) throws IOException { // 0x00 0x02
         int id = Utilities.readVarInt(data);
         data.skip(16);
         int type = Utilities.readVarInt(data);
@@ -47,18 +47,18 @@ public class Clientbound {
         double yy = ByteBuffer.wrap(y).getDouble();
         double zz = ByteBuffer.wrap(z).getDouble();
 
-        if (entities.containsKey(id) == false) {
+        if (client.entities.containsKey(id) == false) {
             Entity e = new Entity();
             e.id = id;
             e.type = type;
             e.x = xx;
             e.y = yy;
             e.z = zz;
-            entities.put(id, e);
+            client.entities.put(id, e);
         }
     }
 
-    public static void spawnPlayer(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x04
+    public static void spawnPlayer(Client client, ByteArrayInputStream data) throws IOException { // 0x04
         int id = Utilities.readVarInt(data);
         data.skip(16);
         byte[] x = new byte[8];
@@ -71,14 +71,14 @@ public class Clientbound {
         double yy = ByteBuffer.wrap(y).getDouble();
         double zz = ByteBuffer.wrap(z).getDouble();
 
-        if (entities.containsKey(id) == false) {
+        if (client.entities.containsKey(id) == false) {
             Entity e = new Entity();
             e.id = id;
             e.type = 111; // Player type
             e.x = xx;
             e.y = yy;
             e.z = zz;
-            entities.put(id, e);
+            client.entities.put(id, e);
         }
     }
 
@@ -134,7 +134,7 @@ public class Clientbound {
         Serverbound.keepalive(client, id);
     }
 
-    public static void entityPos(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
+    public static void entityPos(Client client, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
         int id = Utilities.readVarInt(data);
         byte[] x = new byte[2];
         byte[] y = new byte[2];
@@ -145,7 +145,7 @@ public class Clientbound {
         double xx = (double)ByteBuffer.wrap(x).getShort() / (double)4096;
         double yy = (double)ByteBuffer.wrap(y).getShort() / (double)4096;
         double zz = (double)ByteBuffer.wrap(z).getShort() / (double)4096;
-        Entity e = entities.get(id);
+        Entity e = client.entities.get(id);
         if (e==null) {return;} // If entity does not exist in HashMap, do not update
         e.x += xx;
         e.y += yy;
@@ -186,12 +186,12 @@ public class Clientbound {
         //System.out.printf("<%s> X: %.1f Y: %.1f Z: %.1f\n", client.username, xx, yy, zz);
     }
 
-    public static void destroyEntity(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x3A
+    public static void destroyEntity(Client client, ByteArrayInputStream data) throws IOException { // 0x3A
         int count = Utilities.readVarInt(data); // Gets number of entities in array to destroy
         for (int i=0;i<count;i++) {
             int id = Utilities.readVarInt(data); // Id of entity to destroy (remove from hashmap)
-            if (entities.get(id)!=null) { // Check if entity actually exists in hashmap
-                entities.remove(id); // Remove from hashmap
+            if (client.entities.get(id)!=null) { // Check if entity actually exists in hashmap
+                client.entities.remove(id); // Remove from hashmap
             }
         }
     }
@@ -206,7 +206,7 @@ public class Clientbound {
         }
     }
 
-    public static void entityTeleport(Client client, HashMap<Integer, Entity> entities, ByteArrayInputStream data) throws IOException { // 0x62
+    public static void entityTeleport(Client client, ByteArrayInputStream data) throws IOException { // 0x62
         byte[] x = new byte[8];
         byte[] y = new byte[8];
         byte[] z = new byte[8];
@@ -217,7 +217,7 @@ public class Clientbound {
         double xx = ByteBuffer.wrap(x).getDouble();
         double yy = ByteBuffer.wrap(y).getDouble();
         double zz = ByteBuffer.wrap(z).getDouble();
-        Entity e = entities.get(id);
+        Entity e = client.entities.get(id);
         if (e==null) {return;} // If entity does not exist in HashMap, do not update
         e.x = xx;
         e.y = yy;
