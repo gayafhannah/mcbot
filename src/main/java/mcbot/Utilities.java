@@ -191,25 +191,25 @@ public class Utilities {
     public static void ignoreNBTFloat(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(4);}
     public static void ignoreNBTDouble(ByteArrayInputStream inputStream) throws IOException {inputStream.skip(8);}
     public static void ignoreNBTByteArray(ByteArrayInputStream inputStream) throws IOException {
-        byte[] nameLengthBytes = new byte[4];
-        inputStream.read(nameLengthBytes, 0, 4);
-        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
-        inputStream.skip(nameLength);
+        byte[] arrayLengthBytes = new byte[4];
+        inputStream.read(arrayLengthBytes, 0, 4);
+        int arrayLength = ByteBuffer.wrap(arrayLengthBytes).getInt();
+        inputStream.skip(arrayLength);
     }
     public static void ignoreNBTString(ByteArrayInputStream inputStream) throws IOException {
-        byte[] nameLengthBytes = new byte[2];
-        inputStream.read(nameLengthBytes, 0, 2);
-        short nameLength = ByteBuffer.wrap(nameLengthBytes).getShort();
-        inputStream.skip(nameLength);
+        byte[] stringLengthBytes = new byte[2];
+        inputStream.read(stringLengthBytes, 0, 2);
+        short stringLength = ByteBuffer.wrap(stringLengthBytes).getShort();
+        inputStream.skip(stringLength);
         //System.out.println("s"+nameLength);
     }
     public static void ignoreNBTList(ByteArrayInputStream inputStream) throws IOException, InterruptedException {
         byte tag = (byte)inputStream.read(); // was .skip(1)
-        byte[] nameLengthBytes = new byte[4];
-        inputStream.read(nameLengthBytes, 0, 4);
-        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
+        byte[] listLengthBytes = new byte[4];
+        inputStream.read(listLengthBytes, 0, 4);
+        int listLength = ByteBuffer.wrap(listLengthBytes).getInt();
         //System.out.println(tag+"a"+nameLength);
-        for (int i=0;i<nameLength;i++) {
+        for (int i=0;i<listLength;i++) {
             //System.out.println("l"+tag);
             switch (tag) {
                 case 0x01: // TAG_Byte
@@ -254,15 +254,15 @@ public class Utilities {
         }
     }
     public static void ignoreNBTIntArray(ByteArrayInputStream inputStream) throws IOException {
-        byte[] nameLengthBytes = new byte[4];
-        inputStream.read(nameLengthBytes, 0, 4);
-        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
-        inputStream.skip(nameLength*4);
+        byte[] arrayLengthBytes = new byte[4];
+        inputStream.read(arrayLengthBytes, 0, 4);
+        int arrayLength = ByteBuffer.wrap(arrayLengthBytes).getInt();
+        inputStream.skip(arrayLength*4);
     }
     public static void ignoreNBTLongArray(ByteArrayInputStream inputStream) throws IOException {
-        byte[] nameLengthBytes = new byte[4];
-        inputStream.read(nameLengthBytes, 0, 4);
-        int nameLength = ByteBuffer.wrap(nameLengthBytes).getInt();
-        inputStream.skip(nameLength*8);
+        byte[] arrayLengthBytes = new byte[4];
+        inputStream.read(arrayLengthBytes, 0, 4);
+        int arrayLength = ByteBuffer.wrap(arrayLengthBytes).getInt();
+        inputStream.skip(arrayLength*8);
     }
 }
