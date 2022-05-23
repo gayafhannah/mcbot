@@ -175,7 +175,8 @@ public class Client extends Thread{
                         break;
                     case 0x0B: // Block action
                         break;
-                    case 0x0C: // Query entity NBT
+                    case 0x0C: // Block Change
+                        Clientbound.blockChange(this, data);
                         break;
                     case 0x0D: // Boss bar
                         break;
@@ -217,6 +218,7 @@ public class Client extends Thread{
                         Clientbound.keepalive(this, data);
                         break;
                     case 0x22: // Chunk and Lighting Data
+                        Clientbound.chunkLightData(this, data);
                         break;
                     case 0x23: // Particle/Sound Effect
                         break;
@@ -273,6 +275,7 @@ public class Client extends Thread{
                     case 0x3E: // Update Entity Head Look
                         break;
                     case 0x3F: // Multiple blocks change in one tick
+                        Clientbound.multiBlockChange(this, data);
                         break;
                     case 0x48: // Currently selected hotbar slot TODO
                         break;

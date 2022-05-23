@@ -82,6 +82,17 @@ public class Clientbound {
         }
     }
 
+    public static void blockChange(Client client, ByteArrayInputStream data) throws IOException { // 0x0C TODO
+        byte[] locationBytes = new byte[8];
+        data.read(locationBytes, 0, 8);
+        long location = ByteBuffer.wrap(locationBytes).getLong();
+        int x = (int)(location >> 38);
+        int y = (int)(location & 0xFFF); if (y>=1<<11) {y-=1<<12;}
+        int z = (int)(location >> 12) & 0x3FFFFFF;
+        int blockId = Utilities.readVarInt(data);
+        System.out.printf("ID: %d X:%d Y:%d Z:%d\n", blockId, x, y, z);
+    }
+
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
         String cMsg = Utilities.readString(data);
         if (Pattern.matches("^\\{\"translate\":\"chat\\.type\\.text\",\"with\":\\[\\{\"text\":\".*\"},\\{\"text\":\".*\"}]}",cMsg)) { // If normal chat message with nothing special at all
@@ -132,6 +143,10 @@ public class Clientbound {
         data.read(id, 0, 8);
         //System.out.printf("<%s> Recieved Keepalive.\n", client.username);
         Serverbound.keepalive(client, id);
+    }
+
+    public static void chunkLightData(Client client, ByteArrayInputStream data) throws IOException { // 0x22
+
     }
 
     public static void entityPos(Client client, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
@@ -194,6 +209,10 @@ public class Clientbound {
                 client.entities.remove(id); // Remove from hashmap
             }
         }
+    }
+
+    public static void multiBlockChange(Client client, ByteArrayInputStream data) throws IOException { // 0x3F
+
     }
 
     public static void updateHealth(Client client, ByteArrayInputStream data) throws IOException { // 0x52
