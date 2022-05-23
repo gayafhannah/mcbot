@@ -212,7 +212,25 @@ public class Clientbound {
     }
 
     public static void multiBlockChange(Client client, ByteArrayInputStream data) throws IOException { // 0x3F
-
+        byte[] locationBytes = new byte[8];
+        data.read(locationBytes, 0, 8);
+        long location = ByteBuffer.wrap(locationBytes).getLong();
+        int chunkX = (int)(location >> 42);
+        int chunkY = (int)(location << 44 >> 44);
+        int chunkZ = (int)(location << 22 >> 42);
+        data.skip(1); // Skip boolean that inverts light update packets think, idk, not useful
+        int blockArraySize = Utilities.readVarInt(data);
+        byte[] blockData;
+        long blockLong;
+        int blockId, localX, localY, localZ;
+        for (int i=0;i<blockArraySize;i++) {
+            blockLong = Utilities.readVarLong(data);
+            blockId = (int)(blockLong >> 12);
+            localX = (int)(blockLong >> 8) & 0xF;
+            localY = (int)(blockLong) & 0xF;
+            localZ = (int)(blockLong >> 4) & 0xF;
+            System.out.printf("mID: %d X:%d Y:%d Z:%d\n", blockId, localX+(chunkX*16), localY+(chunkY*16), localZ+(chunkZ*16));
+        }
     }
 
     public static void updateHealth(Client client, ByteArrayInputStream data) throws IOException { // 0x52
