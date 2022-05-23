@@ -6,6 +6,7 @@ import java.util.*;
 import mcbot.Client;
 import mcbot.Inventory;
 import mcbot.Entity;
+import mcbot.Pathfinder;
 
 public class Worker extends Thread {
     Client client;
@@ -43,6 +44,9 @@ public class Worker extends Thread {
                             break;
                         case "blk":
                             blockJob();
+                            break;
+                        case "path":
+                            pathJob();
                             break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job!");
@@ -133,5 +137,10 @@ public class Worker extends Thread {
         System.out.println(client.chunks.getBlock(-7, -60, 537));
         String msg = String.format("The block below me is: %d",client.chunks.getBlock((int)Math.floor(client.playerX),(int)Math.floor(client.playerY)-1,(int)Math.floor(client.playerZ)));
         Serverbound.chatMessage(client, msg);
+    }
+
+    private void pathJob() throws IOException {
+        Pathfinder p = new Pathfinder(client);
+        p.pathTo(2, -60, 538);
     }
 }
