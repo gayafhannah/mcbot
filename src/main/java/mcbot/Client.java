@@ -28,6 +28,7 @@ public class Client extends Thread{
     public int compression=-1; // -1 Means no compression, any other value is compression threshold
     public int mode = 0; // 0 Means Handshake, 1 Means Normal
     public boolean alive = true;
+    public boolean moveInterrupted;
     public int stateId;
 
     public double playerX, playerY, playerZ;

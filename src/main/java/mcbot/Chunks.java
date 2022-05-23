@@ -15,9 +15,9 @@ public class Chunks {
     class Chunk {
         public ConcurrentHashMap<Long, Integer> blockMap = new ConcurrentHashMap<Long, Integer>();
     }
-    class Block {
+    /*class Block { // Not needed, might use later if additional storage is needed per block
         public int id;
-    }
+    }*/
 
     public Chunk newChunk(int chunkX, int chunkZ) {
         long chunkXZ = ((long)chunkX << 32) | ((long)chunkZ << 32 >>> 32);

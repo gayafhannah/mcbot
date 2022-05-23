@@ -269,6 +269,7 @@ public class Clientbound {
     }
 
     public static void playerPosLook(Client client, ByteArrayInputStream data) throws IOException { // 0x38
+        client.moveInterrupted = true
         //Get the data
         byte[] x = new byte[8];
         byte[] y = new byte[8];

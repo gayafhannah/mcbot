@@ -80,4 +80,10 @@ public class Action {
         Thread.sleep(1500);
         Serverbound.playerDigging(client, 2, x, y, z);
     }
+
+    //public static boolean moveDelta(Client client, int dX, int dY, int dZ) {moveDelta(client, dX, dY, dZ, 0.2);}
+    //public static boolean moveDelta(Client client, int dX, int dY, int dZ, float speed) throws IOException, InterruptedException { // Move, speed is per tick
+    //    client.moveInterrupted = false;
+    //    for (int i=0;i<)
+    //}
 }

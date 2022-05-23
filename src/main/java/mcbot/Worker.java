@@ -131,5 +131,7 @@ public class Worker extends Thread {
 
     private void blockJob() throws IOException {
         System.out.println(client.chunks.getBlock(-7, -60, 537));
+        String msg = String.format("The block below me is: %d",client.chunks.getBlock((int)Math.floor(client.playerX),(int)Math.floor(client.playerY)-1,(int)Math.floor(client.playerZ)));
+        Serverbound.chatMessage(client, msg);
     }
 }
