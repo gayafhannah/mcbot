@@ -41,6 +41,9 @@ public class Worker extends Thread {
                         case "inv":
                             listInvJob();
                             break;
+                        case "blk":
+                            blockJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job!");
                     }
@@ -124,5 +127,9 @@ public class Worker extends Thread {
 
     private void digJob() throws IOException, InterruptedException {
         Action.digBlock(client, -21, -53, 539);
+    }
+
+    private void blockJob() throws IOException {
+        System.out.println(client.chunks.getBlock(-7, -60, 537));
     }
 }

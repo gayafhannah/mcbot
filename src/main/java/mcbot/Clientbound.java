@@ -90,7 +90,8 @@ public class Clientbound {
         int y = (int)(location & 0xFFF); if (y>=1<<11) {y-=1<<12;}
         int z = (int)(location >> 12) & 0x3FFFFFF;
         int blockId = Utilities.readVarInt(data);
-        System.out.printf("ID: %d X:%d Y:%d Z:%d\n", blockId, x, y, z);
+        client.chunks.setBlock(blockId, x, y, z);
+        //System.out.printf("ID: %d X:%d Y:%d Z:%d\n", blockId, x, y, z);
     }
 
     public static void chatMessage(Client client, ByteArrayInputStream data) throws IOException { // 0x0F
@@ -173,6 +174,13 @@ public class Clientbound {
                 blockId = Utilities.readVarInt(data);
                 // all blocks are of this blockId
                 //System.out.printf("Chunk %d %d %d is all ID:%d\n",chunkX, chunkY, chunkZ, blockId);
+                for (int x=0;x<16;x++) {
+                    for (int y=0;y<16;y++) {
+                        for (int z=0;z<16;z++) {
+                            client.chunks.setBlock(blockId, (chunkX*16)+x, (chunkY*16)+y, (chunkZ*16)+z);
+                        }
+                    }
+                }
             } else if (bitsPerEntry <= 8) { // Indirect
                 if (bitsPerEntry <= 4) {bitsPerEntry = 4;};
                 int paletteLength = Utilities.readVarInt(data);
@@ -189,9 +197,8 @@ public class Clientbound {
                     blockLong = ByteBuffer.wrap(blockBytes).getLong();
                     for (int j=0;j<(int)(64/bitsPerEntry);j++) {
                         blockId = palette[(int)(blockLong << (64-((j*bitsPerEntry)+bitsPerEntry)) >>> (64-bitsPerEntry))];
-                        if (blockId>=100) {
-                            System.out.printf("X:%d Y:%d Z:%d ID:%d\n",(chunkX*16)+(k%16), (chunkY*16)+((k/(16)/16)%16), (chunkZ*16)+((k/16)%16), blockId);
-                        }
+                        client.chunks.setBlock(blockId, (chunkX*16)+(k%16)/*Local X*/, (chunkY*16)+(((k/16)/16)%16)/*Local Y*/, (chunkZ*16)+((k/16)%16)/*Local Z*/);
+                        //System.out.printf("X:%d Y:%d Z:%d ID:%d\n",(chunkX*16)+(k%16), (chunkY*16)+((k/(16)/16)%16), (chunkZ*16)+((k/16)%16), blockId);
                         k++;
                     }
                 }
@@ -205,6 +212,7 @@ public class Clientbound {
                     blockLong = ByteBuffer.wrap(blockBytes).getLong();
                     for (int j=0;j<(int)(64/bitsPerEntry);j++) {
                         blockId = (int)(blockLong << (64-((j*bitsPerEntry)+bitsPerEntry)) >>> (64-bitsPerEntry));
+                        client.chunks.setBlock(blockId, (chunkX*16)+(k%16)/*Local X*/, (chunkY*16)+(((k/16/16))%16)/*Local Y*/, (chunkZ*16)+((k/16)%16)/*Local Z*/);
                         //System.out.printf("X:%d Y:%d Z:%d ID:%d\n",(chunkX*16)+(k%16), chunkY*16, (chunkZ*16)+((k/16)%16), blockId);
                         k++;
                     }
@@ -304,7 +312,8 @@ public class Clientbound {
             localX = (int)(blockLong >> 8) & 0xF;
             localY = (int)(blockLong) & 0xF;
             localZ = (int)(blockLong >> 4) & 0xF;
-            System.out.printf("mID: %d X:%d Y:%d Z:%d\n", blockId, localX+(chunkX*16), localY+(chunkY*16), localZ+(chunkZ*16));
+            client.chunks.setBlock(blockId, (chunkX*16)+localX, (chunkY*16)+localY, (chunkZ*16)+localZ);
+            //System.out.printf("mID: %d X:%d Y:%d Z:%d\n", blockId, localX+(chunkX*16), localY+(chunkY*16), localZ+(chunkZ*16));
         }
     }
 
