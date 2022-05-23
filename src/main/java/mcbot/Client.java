@@ -213,6 +213,7 @@ public class Client extends Thread{
                     case 0x1C: // Explosion
                         break;
                     case 0x1D: // Unload chunk
+                        Clientbound.unloadChunk(this, data);
                         break;
                     case 0x1E: // Change game state
                         break;

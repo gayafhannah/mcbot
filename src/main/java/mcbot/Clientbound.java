@@ -139,6 +139,16 @@ public class Clientbound {
         inventory.slots.put(slotId, slot);
     }
 
+    public static void unloadChunk(Client client, ByteArrayInputStream data) throws IOException { // 0x1D
+        byte[] chunkXBytes = new byte[4];
+        byte[] chunkZBytes = new byte[4];
+        data.read(chunkXBytes, 0, 4);
+        data.read(chunkZBytes, 0, 4);
+        int chunkX = ByteBuffer.wrap(chunkXBytes).getInt();
+        int chunkZ = ByteBuffer.wrap(chunkZBytes).getInt();
+        client.chunks.delChunk(chunkX, chunkZ);
+    }
+
     public static void keepalive(Client client, ByteArrayInputStream data) throws IOException { // 0x21
         byte[] id = new byte[8];
         data.read(id, 0, 8);
