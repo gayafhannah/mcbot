@@ -38,8 +38,11 @@ public class Worker extends Thread {
                         case "target":
                             targetJob();
                             break;
+                        case "inv":
+                            listInvJob();
+                            break;
                         default:
-                            Serverbound.chatMessage(client, "Invalid Job!" + job[0]);
+                            Serverbound.chatMessage(client, "Invalid Job!");
                     }
                     Serverbound.chatMessage(client, "Done Job");
                 }
@@ -99,6 +102,18 @@ public class Worker extends Thread {
         Action.shootBow(client, true, -14, -59, 530);
         Action.shootBow(client, true, -7, -56, 524);
         Action.shootBow(client, true, -21, -51, 539);
+    }
+
+    private void listInvJob() throws IOException {
+        for (int i : client.inventories.keySet()) {
+            Inventory j = client.inventories.get(i);
+            for (int k : j.slots.keySet()) {
+                Inventory.Slot s = j.slots.get(k);
+                if (s.hasItem) {
+                    System.out.printf("<%s> Window: %d Slot: %d Item ID: %d Item Count: %d\n", client.username, i, k, s.itemId, s.itemCount);
+                }
+            }
+        }
     }
 
     private void targetJob() throws IOException, InterruptedException {
