@@ -145,8 +145,83 @@ public class Clientbound {
         Serverbound.keepalive(client, id);
     }
 
-    public static void chunkLightData(Client client, ByteArrayInputStream data) throws IOException { // 0x22
-
+    public static void chunkLightData(Client client, ByteArrayInputStream data) throws IOException, InterruptedException { // 0x22 TODO
+        byte[] chunkXBytes = new byte[4];
+        byte[] chunkZBytes = new byte[4];
+        data.read(chunkXBytes, 0, 4);
+        data.read(chunkZBytes, 0, 4);
+        int chunkX = ByteBuffer.wrap(chunkXBytes).getInt();
+        int chunkZ = ByteBuffer.wrap(chunkZBytes).getInt();
+        Utilities.ignoreNBT(data); // Ignore heightmaps NBT
+        int dataStructureSize = Utilities.readVarInt(data); // Size of byte array for chunk data structure, rename later lol
+        // Start array of Chunk Section (bottom to top)
+        byte[] blockCountBytes;
+        short blockCount;
+        byte bitsPerEntry;
+        byte[] blockBytes;
+        long blockLong;
+        int blocksArrayLength;
+        int blockId;
+        for (int chunkY=-4;chunkY<16;chunkY++) {
+            blockCountBytes = new byte[2];
+            data.read(blockCountBytes, 0, 2);
+            blockCount = ByteBuffer.wrap(blockCountBytes).getShort();
+            int k = 0;
+            // Enter block states palleted container
+            bitsPerEntry = (byte)data.read();
+            if (bitsPerEntry==0) { // Single Valued
+                blockId = Utilities.readVarInt(data);
+                // all blocks are of this blockId
+                //System.out.printf("Chunk %d %d %d is all ID:%d\n",chunkX, chunkY, chunkZ, blockId);
+            } else if (bitsPerEntry <= 8) { // Indirect
+                if (bitsPerEntry <= 4) {bitsPerEntry = 4;};
+                int paletteLength = Utilities.readVarInt(data);
+                int[] palette = new int[paletteLength];
+                for (int i=0;i<paletteLength;i++) {
+                    palette[i] = Utilities.readVarInt(data);
+                }
+                blocksArrayLength = Utilities.readVarInt(data);
+                //TODO TODO TODO Read Data Array
+//                System.out.printf("PX:%d CY:%d CZ:%d\n",chunkX, chunkY, chunkZ);
+                for (int i=0;i<blocksArrayLength;i++) {
+                    blockBytes = new byte[8];
+                    data.read(blockBytes, 0, 8);
+                    blockLong = ByteBuffer.wrap(blockBytes).getLong();
+                    for (int j=0;j<(int)(64/bitsPerEntry);j++) {
+                        blockId = palette[(int)(blockLong << (64-((j*bitsPerEntry)+bitsPerEntry)) >>> (64-bitsPerEntry))];
+                        if (blockId>=100) {
+                            System.out.printf("X:%d Y:%d Z:%d ID:%d\n",(chunkX*16)+(k%16), (chunkY*16)+((k/(16)/16)%16), (chunkZ*16)+((k/16)%16), blockId);
+                        }
+                        k++;
+                    }
+                }
+            } else { // Direct
+                //TODO TODO TODO Read Data Array
+                blocksArrayLength = Utilities.readVarInt(data);
+//                System.out.printf("DX:%d CY:%d CZ:%d\n",chunkX, chunkY, chunkZ);
+                for (int i=0;i<blocksArrayLength;i++) {
+                    blockBytes = new byte[8];
+                    data.read(blockBytes, 0, 8);
+                    blockLong = ByteBuffer.wrap(blockBytes).getLong();
+                    for (int j=0;j<(int)(64/bitsPerEntry);j++) {
+                        blockId = (int)(blockLong << (64-((j*bitsPerEntry)+bitsPerEntry)) >>> (64-bitsPerEntry));
+                        //System.out.printf("X:%d Y:%d Z:%d ID:%d\n",(chunkX*16)+(k%16), chunkY*16, (chunkZ*16)+((k/16)%16), blockId);
+                        k++;
+                    }
+                }
+            }
+            //Start of Biomes palleted Container
+            bitsPerEntry = (byte)data.read();
+            if (bitsPerEntry==0) {
+                Utilities.readVarInt(data);
+            } else if (bitsPerEntry<=8) { // Read and ignore palette
+                int paletteLength = Utilities.readVarInt(data);
+                for (int i=0;i<paletteLength;i++) {Utilities.readVarInt(data);}
+            }
+            int arrayLength = Utilities.readVarInt(data);
+            data.skip(arrayLength*8);
+        }
+        //System.out.println("ENDCHUNK");
     }
 
     public static void entityPos(Client client, ByteArrayInputStream data) throws IOException { // 0x29 0x2A
@@ -211,7 +286,7 @@ public class Clientbound {
         }
     }
 
-    public static void multiBlockChange(Client client, ByteArrayInputStream data) throws IOException { // 0x3F
+    public static void multiBlockChange(Client client, ByteArrayInputStream data) throws IOException { // 0x3F TODO
         byte[] locationBytes = new byte[8];
         data.read(locationBytes, 0, 8);
         long location = ByteBuffer.wrap(locationBytes).getLong();
