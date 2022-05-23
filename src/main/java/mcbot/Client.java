@@ -3,6 +3,7 @@ package mcbot;
 import mcbot.Serverbound;
 import mcbot.Entity;
 import mcbot.Inventory;
+import mcbot.Chunks;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,6 +19,7 @@ public class Client extends Thread{
     public String username;
     public int protocol = 758;
 
+    public Chunks chunks = new Chunks(this);
     public ConcurrentHashMap<Integer, Entity> entities = new ConcurrentHashMap<Integer, Entity>(); // Entity storage
     public HashMap<Integer, Inventory> inventories = new HashMap<Integer, Inventory>();
     public Queue<String[]> workerJobs = new LinkedList<>();
@@ -50,6 +52,8 @@ public class Client extends Thread{
             System.out.printf("<%s> Starting handshake\n", username);
             Serverbound.handshake(this);
             Serverbound.login_start(this);
+            //chunks.newChunk(5,7);
+            //chunks.newChunk(5,-6);
             Listen();
             System.out.printf("<%s> Stopping\n", username);
         } catch (Exception e) {
