@@ -2,15 +2,21 @@ package mcbot;
 
 import java.io.*;
 import java.util.*;
+import java.util.AbstractList.*;
+import java.util.ArrayList.*;
 
 import mcbot.Client;
 
 public class Pathfinder {
     public Client client;
     public HashMap<Long, Node> nodes = new HashMap<Long, Node>();
+    private ArrayList closed = new ArrayList();
+    private ArrayList<Node> open = new ArrayList<Node>();
     private int sX, sY, sZ; // Starting XYZ
     private int gX, gY, gZ; // Goal XYZ
     private Node cN;
+    private int maxDepth;
+    private int maxSearchDistance = 100; // Max distance of 100
 
     public Pathfinder(Client _client) {
         client = _client;
@@ -23,64 +29,61 @@ public class Pathfinder {
         sX = (int)Math.floor(client.playerX);
         sY = (int)Math.floor(client.playerY);
         sZ = (int)Math.floor(client.playerZ);
-        cN = new Node(null, sX, sY, sZ, 1, heuristic(sX, sY, sZ));
-        nodes.put(xyzToLocation(sX, sY, sZ), cN);
-        boolean stop = false;
-        while (!stop) {
-            System.out.printf("Currently at Node: %d %d %d\n", cN.x, cN.y, cN.z);
-            if ((cN.x==gX) && (cN.y==gY) && (cN.z==gZ)) {break;}
-            calculateNeighbours();
-            chooseNextNode();
+
+        nodes.put(xyz(gX, gY, gZ), new Node(null, gX, gY, gZ, 0, 0, 0));
+        cN = new Node(null, sX, sY, sZ, 0, heuristic(sX, sY, sZ), 0);
+        closed.clear();
+        open.clear();
+        open.add(cN);
+
+        maxDepth = 0;
+        while ((open.size() != 0) && (maxDepth < maxSearchDistance)) {
+            cN = open.get(0);
+            //cN = open.removeFirst();
+            if (cN == nodes.get(xyz(gX, gY, gZ))) {  // If reached target node
+                System.out.println("REached goAl");
+                break;
+            }
+            open.remove(cN);
+       //     open.removeFirst();
+            closed.add(cN);
+            System.out.printf("At: %d %d %d : %d\n", cN.x, cN.y, cN.z, open.size());
+
+            for (int x=-1;x<2;x++) {
+                for (int z=-1;z<2;z++) {
+                    if ((x==0) && (z==0)) {continue;}
+                    int nX = x+cN.x;
+                    int nY = cN.y;
+                    int nZ = z+cN.z;
+
+                    if ((x!=0) && (z!=0)) {continue;} // Skip diagonals for now
+
+                    if (validPosition(nX, nY, nZ)) {
+                        double nSCost = cN.cost + getCost(nX, nY, nZ);
+                        Node neighbour = nodes.get(xyz(nX, nY, nZ));
+                        if (neighbour==null) { // Create node if not exists
+                            neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
+                            nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
+                        }
+                        System.out.printf("Valid: %d %d %d %f\n", nX, nY, nZ, nSCost);
+                        if (nSCost < neighbour.cost) {
+                            System.out.println("Better cost found");
+                            if (open.contains(neighbour)) {open.remove(neighbour);}
+                            if (closed.contains(neighbour)) {closed.remove(neighbour);}
+                        }
+                        if (!open.contains(neighbour) && !closed.contains(neighbour)) {
+                            neighbour.cost = nSCost;
+                            neighbour.depth = cN.depth+1;
+                            neighbour.h = heuristic(nX, nY, nZ);
+                            maxDepth = Math.max(maxDepth, neighbour.depth);
+                            open.add(neighbour);
+                            System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
+                        }
+                    }
+                }
+            }
         }
         System.out.println("DONE");
-    }
-
-    private void chooseNextNode() {
-        Node bestNode = cN;
-        System.out.printf("pls %f\n",cN.f);
-        if (nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z));}
-        if (nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z));}
-        if (nodes.get(xyzToLocation(cN.x, cN.y, cN.z+1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x, cN.y, cN.z+1));}
-        if (nodes.get(xyzToLocation(cN.x, cN.y, cN.z-1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x, cN.y, cN.z-1));}
-        if (nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z+1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z+1));}
-        if (nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z-1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x+1, cN.y, cN.z-1));}
-        if (nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z+1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z+1));}
-        if (nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z-1)).cost<=bestNode.f) {bestNode = nodes.get(xyzToLocation(cN.x-1, cN.y, cN.z-1));}
-        if (bestNode == cN) {
-            cN.f+=1;
-            cN = cN.parent;
-        } else {cN = bestNode;}
-    }
-
-    private void calculateNeighbours() {
-        calculateNodeAxis(cN.x+1, cN.y, cN.z);
-        calculateNodeAxis(cN.x-1, cN.y, cN.z);
-        calculateNodeAxis(cN.x, cN.y, cN.z+1);
-        calculateNodeAxis(cN.x, cN.y, cN.z-1);
-        calculateNodeDiag(cN.x+1, cN.y, cN.z+1);
-        calculateNodeDiag(cN.x-1, cN.y, cN.z+1);
-        calculateNodeDiag(cN.x+1, cN.y, cN.z-1);
-        calculateNodeDiag(cN.x-1, cN.y, cN.z-1);
-    }
-
-    private void calculateNodeAxis(int nX, int nY, int nZ) {
-        double cost = move(nX, nY, nZ);
-        double h = heuristic(nX, nY, nZ);
-        //System.out.println(h);
-        if (nodes.get(xyzToLocation(nX,nY,nZ))!=null) {return;}
-        nodes.put(xyzToLocation(nX, nY, nZ), new Node(cN, nX, nY, nZ, cost, h));
-    }
-    private void calculateNodeDiag(int nX, int nY, int nZ) {
-        boolean notPossible = false;
-        double cost = move(nX, nY, nZ);
-        if (nX>cN.x) {notPossible |= !validPosition(cN.x+1,cN.y,cN.z);}
-        if (nX<cN.x) {notPossible |= !validPosition(cN.x-1,cN.y,cN.z);}
-        if (nZ>cN.z) {notPossible |= !validPosition(cN.x,cN.y,cN.z+1);}
-        if (nZ<cN.z) {notPossible |= !validPosition(cN.x,cN.y,cN.z-1);}
-        if (notPossible) {cost = Double.POSITIVE_INFINITY;}
-        double h = heuristic(nX, nY, nZ);
-        if (nodes.get(xyzToLocation(nX,nY,nZ))!=null) {return;}
-        nodes.put(xyzToLocation(nX, nY, nZ), new Node(cN, nX, nY, nZ, cost, h));
     }
 
     private boolean validPosition(int x, int y, int z) { // Checks if position is valid for player to stand on
@@ -94,18 +97,13 @@ public class Pathfinder {
         return Math.sqrt(Math.abs((double)Math.pow(gX-nX,2) + (double)Math.pow(gY-nY,2) + (double)Math.pow(gZ-nZ,2)));
     }
 
-    private double move(int nX, int nY, int nZ) { // Cost to get here
-        if (!validPosition(nX, nY, nZ)) {return Double.POSITIVE_INFINITY;}
-        double cost = cN.cost;
-        if ((cN.x!=nX) && (cN.z!=nZ)) { // Moving diagonally
-        cost += Math.sqrt(2);
-        } else { // Not moving diagonally
-        cost += 1;
-        }
-        return cost-0.1;
+    private double getCost(int nX, int nY, int nZ) { // Cost to get here
+        double cost = Math.sqrt(Math.abs((double)Math.pow(gX-nX,2) + (double)Math.pow(gY-nY,2) + (double)Math.pow(gZ-nZ,2)));
+        // Maybe add weird offsets and stuff if other conditions met
+        return cost;
     }
 
-    private long xyzToLocation(int x, int y, int z) {
+    private long xyz(int x, int y, int z) {
         return ((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF);
     }
 
@@ -115,8 +113,9 @@ public class Pathfinder {
         public double cost;
         public double h;
         public double f;
-        public Node(Node _parent, int _x, int _y, int _z, double _cost, double _h) {
-            System.out.printf("%d %d %d : %f %f : %f\n",_x,_y,_z,_cost,_h, _cost+_h);
+        public int depth;
+        public Node(Node _parent, int _x, int _y, int _z, double _cost, double _h, int _depth) {
+            //System.out.printf("%d %d %d : %f %f : %f\n",_x,_y,_z,_cost,_h, _cost+_h);
             parent = _parent;
             x = _x;
             y = _y;
@@ -124,6 +123,7 @@ public class Pathfinder {
             cost = _cost;
             h = _h;
             f = cost+h;
+            depth = _depth;
         }
     }
 }
