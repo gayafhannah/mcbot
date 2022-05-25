@@ -139,8 +139,13 @@ public class Worker extends Thread {
         Serverbound.chatMessage(client, msg);
     }
 
-    private void pathJob() throws IOException {
+    private void pathJob() throws IOException, InterruptedException {
         Pathfinder p = new Pathfinder(client);
-        p.pathTo(2, -60, 538);
+        if (p.getPath(2, -60, 538)) {
+            System.out.println("Doing path");
+            p.doPath();
+        } else {
+            System.out.println("No path");
+        }
     }
 }

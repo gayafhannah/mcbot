@@ -15,6 +15,7 @@ public class Pathfinder {
     private int sX, sY, sZ; // Starting XYZ
     private int gX, gY, gZ; // Goal XYZ
     private Node cN;
+    public LinkedList<Node> path;
     private int maxDepth;
     private int maxSearchDistance = 100; // Max distance of 100
 
@@ -22,7 +23,7 @@ public class Pathfinder {
         client = _client;
     }
 
-    public void pathTo(int _gX, int _gY, int _gZ) {
+    public boolean getPath(int _gX, int _gY, int _gZ) {
         gX = _gX;
         gY = _gY;
         gZ = _gZ;
@@ -30,6 +31,7 @@ public class Pathfinder {
         sY = (int)Math.floor(client.playerY);
         sZ = (int)Math.floor(client.playerZ);
 
+        nodes.clear();
         nodes.put(xyz(gX, gY, gZ), new Node(null, gX, gY, gZ, 0, 0, 0));
         cN = new Node(null, sX, sY, sZ, 0, heuristic(sX, sY, sZ), 0);
         closed.clear();
@@ -41,13 +43,18 @@ public class Pathfinder {
             cN = open.get(0);
             //cN = open.removeFirst();
             if (cN == nodes.get(xyz(gX, gY, gZ))) {  // If reached target node
-                System.out.println("REached goAl");
-                break;
+                System.out.println("Reached goal");
+                path = buildPath(cN);
+                return true;
             }
+            /*if (cN.parent == null) {
+                System.out.println("No path found");
+                break;
+            }*/
             open.remove(cN);
        //     open.removeFirst();
             closed.add(cN);
-            System.out.printf("At: %d %d %d : %d\n", cN.x, cN.y, cN.z, open.size());
+            //System.out.printf("At: %d %d %d : %d\n", cN.x, cN.y, cN.z, open.size());
 
             for (int x=-1;x<2;x++) {
                 for (int z=-1;z<2;z++) {
@@ -76,6 +83,7 @@ public class Pathfinder {
                             neighbour.cost = nSCost;
                             neighbour.depth = cN.depth+1;
                             neighbour.h = heuristic(nX, nY, nZ);
+                            neighbour.parent = cN;
                             maxDepth = Math.max(maxDepth, neighbour.depth);
                             open.add(neighbour);
                             //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
@@ -85,7 +93,30 @@ public class Pathfinder {
                 }
             }
         }
-        System.out.println("DONE");
+        System.out.println("Failed to find path.");
+        path = null;
+        return false;
+    }
+
+    private LinkedList buildPath(Node cN) {
+        LinkedList path = new LinkedList();
+        while (cN != null) {
+            //System.out.printf("%d %d %d\n", cN.x, cN.y, cN.z);
+            path.add(cN);
+            cN = cN.parent;
+        }
+        return path;
+    }
+
+    public void doPath() throws IOException, InterruptedException {
+        System.out.println("Path:");
+        //for (Node n : path) {
+        for (int i=path.size()-1;i!=0;i--) {
+            Node n = path.get(i);
+            System.out.printf("%d %d %d\n", n.x, n.y, n.z);
+            Serverbound.playerPosition(client, n.x+0.5, n.y, n.z+0.5);
+            Thread.sleep(200);
+        }
     }
 
     private boolean validPosition(int x, int y, int z) { // Checks if position is valid for player to stand on
