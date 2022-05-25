@@ -63,7 +63,10 @@ public class Pathfinder {
                     int nY = cN.y;
                     int nZ = z+cN.z;
 
-                    if ((x!=0) && (z!=0)) {continue;} // Skip diagonals for now
+                    if ((x!=0) && (z!=0)) {
+                        if (!validPosition(nX, nY, cN.z)) {continue;}
+                        if (!validPosition(cN.x, nY, nZ)) {continue;}
+                    }
 
                     if (validPosition(nX, nY, nZ)) {
                         double nSCost = cN.cost + getCost(nX, nY, nZ);
