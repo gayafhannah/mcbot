@@ -114,7 +114,9 @@ public class Pathfinder {
     public void doPath() throws IOException, InterruptedException {
         System.out.println("Path:");
         //for (Node n : path) {
+        client.moveInterrupted = false;
         for (int i=path.size()-1;i!=0;i--) {
+            if (client.moveInterrupted) {break;}
             Node n = path.get(i);
             System.out.printf("%d %d %d\n", n.x, n.y, n.z);
             Serverbound.playerPosition(client, n.x+0.5, n.y, n.z+0.5);
