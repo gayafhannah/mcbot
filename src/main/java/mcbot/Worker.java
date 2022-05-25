@@ -48,6 +48,9 @@ public class Worker extends Thread {
                         case "path":
                             pathJob();
                             break;
+                        case "follow":
+                            followJob();
+                            break;
                         default:
                             Serverbound.chatMessage(client, "Invalid Job!");
                     }
@@ -151,5 +154,11 @@ public class Worker extends Thread {
         } else {
             System.out.println("No path");
         }*/
+    }
+
+    private void followJob() throws IOException, InterruptedException {
+        for (Entity e : client.entities.values()) {
+            if (e.type==111) {Action.walkTo(client, (int)e.x, (int)e.y, (int)e.z);}
+        }
     }
 }
