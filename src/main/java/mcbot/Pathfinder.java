@@ -65,9 +65,10 @@ public class Pathfinder {
                             neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
                             nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
                         }
-                        System.out.printf("Valid: %d %d %d %f\n", nX, nY, nZ, nSCost);
+                        //System.out.println(nodes.size());
+                        //System.out.printf("Valid: %d %d %d %f / %x\n", nX, nY, nZ, nSCost,xyz(nX,nY,nZ));
                         if (nSCost < neighbour.cost) {
-                            System.out.println("Better cost found");
+                            //System.out.println("Better cost found");
                             if (open.contains(neighbour)) {open.remove(neighbour);}
                             if (closed.contains(neighbour)) {closed.remove(neighbour);}
                         }
@@ -77,7 +78,8 @@ public class Pathfinder {
                             neighbour.h = heuristic(nX, nY, nZ);
                             maxDepth = Math.max(maxDepth, neighbour.depth);
                             open.add(neighbour);
-                            System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
+                            //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
+                            //System.out.println(neighbour);
                         }
                     }
                 }
@@ -103,7 +105,7 @@ public class Pathfinder {
         return cost;
     }
 
-    private long xyz(int x, int y, int z) {
+    private long xyz(long x, long y, long z) {
         return ((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF);
     }
 
