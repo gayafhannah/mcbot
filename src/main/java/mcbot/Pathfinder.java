@@ -57,40 +57,58 @@ public class Pathfinder {
             //System.out.printf("At: %d %d %d : %d\n", cN.x, cN.y, cN.z, open.size());
 
             for (int x=-1;x<2;x++) {
-                for (int z=-1;z<2;z++) {
-                    if ((x==0) && (z==0)) {continue;}
-                    int nX = x+cN.x;
-                    int nY = cN.y;
-                    int nZ = z+cN.z;
+                for (int y=-1;y<2;y++) {
+                    for (int z=-1;z<2;z++) {
+                        if ((x==0) && (z==0) && (y==0)) {continue;}
+                        if (((x!=0) || (z!=0)) && (y!=0)) {continue;}
+                        int nX = x+cN.x;
+                        int nY = y+cN.y;
+                        int nZ = z+cN.z;
 
-                    if ((x!=0) && (z!=0)) {
-                        if (!validPosition(nX, nY, cN.z)) {continue;}
-                        if (!validPosition(cN.x, nY, nZ)) {continue;}
-                    }
+                        if (cN.y==nY) {
+                            if ((x!=0) && (z!=0)) { // Checks for diagonal movement
+                                if (!canFit(nX, nY, cN.z)) {continue;}
+                                if (!canFit(cN.x, nY, nZ)) {continue;}
+                            }
+                            if (!canFit(nX, nY, nZ)) {continue;} // Standard check
+                            if (!hasWalkableFloor(cN.x, cN.y, cN.z)) { // To stop from walking on air
+                                if (cN.y>cN.parent.y) {
+                                    if (!hasWalkableFloor(cN.parent.x, cN.parent.y, cN.parent.z)) {continue;}
+                                } else {continue;}
+                            }
+                        } else if (cN.y>nY) { // Go down
+                        //System.out.printf("%d %d %d\n", nX, nY, nZ);
+                            if (!canFit(nX, nY, nZ)) {continue;}
+                            //if (hasWalkableFloor(nX, nY, nZ)) {continue;}
+                        } else { // Go up
+                            if (!hasWalkableFloor(cN.x, cN.y, cN.z)) {continue;}
+                            if (!canFit(nX, nY, nZ)) {continue;}
+                        }
 
-                    if (validPosition(nX, nY, nZ)) {
-                        double nSCost = cN.cost + getCost(nX, nY, nZ);
-                        Node neighbour = nodes.get(xyz(nX, nY, nZ));
-                        if (neighbour==null) { // Create node if not exists
-                            neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
-                            nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
-                        }
-                        //System.out.println(nodes.size());
-                        //System.out.printf("Valid: %d %d %d %f / %x\n", nX, nY, nZ, nSCost,xyz(nX,nY,nZ));
-                        if (nSCost < neighbour.cost) {
-                            //System.out.println("Better cost found");
-                            if (open.contains(neighbour)) {open.remove(neighbour);}
-                            if (closed.contains(neighbour)) {closed.remove(neighbour);}
-                        }
-                        if (!open.contains(neighbour) && !closed.contains(neighbour)) {
-                            neighbour.cost = nSCost;
-                            neighbour.depth = cN.depth+1;
-                            neighbour.h = heuristic(nX, nY, nZ);
-                            neighbour.parent = cN;
-                            maxDepth = Math.max(maxDepth, neighbour.depth);
-                            open.add(neighbour);
-                            //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
-                            //System.out.println(neighbour);
+                        if (true) {
+                            double nSCost = cN.cost + getCost(nX, nY, nZ);
+                            Node neighbour = nodes.get(xyz(nX, nY, nZ));
+                            if (neighbour==null) { // Create node if not exists
+                                neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
+                                nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
+                            }
+                            //System.out.println(nodes.size());
+                            //System.out.printf("Valid: %d %d %d %f / %x\n", nX, nY, nZ, nSCost,xyz(nX,nY,nZ));
+                            if (nSCost < neighbour.cost) {
+                                //System.out.println("Better cost found");
+                                if (open.contains(neighbour)) {open.remove(neighbour);}
+                                if (closed.contains(neighbour)) {closed.remove(neighbour);}
+                            }
+                            if (!open.contains(neighbour) && !closed.contains(neighbour)) {
+                                neighbour.cost = nSCost;
+                                neighbour.depth = cN.depth+1;
+                                neighbour.h = heuristic(nX, nY, nZ);
+                                neighbour.parent = cN;
+                                maxDepth = Math.max(maxDepth, neighbour.depth);
+                                open.add(neighbour);
+                                //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
+                                //System.out.println(neighbour);
+                            }
                         }
                     }
                 }
@@ -127,6 +145,15 @@ public class Pathfinder {
     private boolean validPosition(int x, int y, int z) { // Checks if position is valid for player to stand on
         if (client.chunks.getBlock(x,y+1,z)!=0) {return false;} // Head is air
         if (client.chunks.getBlock(x,y,z)!=0) {return false;} // Feet is air
+        if (client.chunks.getBlock(x,y-1,z)==0) {return false;} // Block below is NOT air
+        return true;
+    }
+    private boolean canFit(int x, int y, int z) { // Check if player can exist in these blocks
+        if (client.chunks.getBlock(x,y+1,z)!=0) {return false;} // Head is air
+        if (client.chunks.getBlock(x,y,z)!=0) {return false;} // Feet is air
+        return true;
+    }
+    private boolean hasWalkableFloor(int x, int y, int z) {
         if (client.chunks.getBlock(x,y-1,z)==0) {return false;} // Block below is NOT air
         return true;
     }
