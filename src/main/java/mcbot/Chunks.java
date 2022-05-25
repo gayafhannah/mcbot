@@ -7,7 +7,8 @@ import java.util.concurrent.*;
 import mcbot.Utilities;
 
 public class Chunks {
-    public ConcurrentHashMap<Long, Chunk> chunkMap = new ConcurrentHashMap<Long, Chunk>();
+    //public ConcurrentHashMap<Long, Chunk> chunkMap = new ConcurrentHashMap<Long, Chunk>();
+    public ConcurrentHashMap<Long, Integer> blocks = new ConcurrentHashMap<Long, Integer>();
     public Client client;
 
     public Chunks(Client _client) {client = _client;}
@@ -19,20 +20,23 @@ public class Chunks {
         public int id;
     }*/
 
-    public Chunk newChunk(int chunkX, int chunkZ) {
+    /*public Chunk newChunk(int chunkX, int chunkZ) {
         long chunkXZ = ((long)chunkX << 32) | ((long)chunkZ << 32 >>> 32);
         //System.out.printf("CX: %x\nCZ: %x\nCXZ: %x\n",chunkX,chunkZ,chunkXZ);
         Chunk chunk = new Chunk();
         chunkMap.put(chunkXZ, chunk);
         return chunk;
-    }
+    }*/
 
     public void delChunk(int chunkX, int chunkZ) {
         long chunkXZ = ((long)chunkX << 32) | ((long)chunkZ << 32 >>> 32);
-        chunkMap.remove(chunkXZ);
+        //chunkMap.remove(chunkXZ);
     }
 
-    public void setBlock(int blockId, int blockX, int blockY, int blockZ) {
+    public void setBlock(int blockId, long blockX, long blockY, long blockZ) {
+        long location = ((blockX & 0x3FFFFFF) << 38) | ((blockZ & 0x3FFFFFF) << 12) | (blockY & 0xFFF);
+        if (blockId==0) {blocks.remove(location); return;}
+        blocks.put(location, blockId);/*
         // Get ChunkXZ from Global BlockXZ
         int chunkX = (int)Math.floor((float)blockX/16);
         int chunkZ = (int)Math.floor((float)blockZ/16);
@@ -52,10 +56,14 @@ public class Chunks {
         Chunk chunk = chunkMap.get(chunkXZ);
         if (chunk==null) {chunk = newChunk(chunkX,chunkZ);}
         if (blockId==0) {chunk.blockMap.remove(blockXYZ); return;}
-        chunk.blockMap.put(blockXYZ, blockId);
+        chunk.blockMap.put(blockXYZ, blockId);*/
     }
 
-    public int getBlock(int blockX, int blockY, int blockZ) {
+    public long getBlock(long blockX, long blockY, long blockZ) {
+        long location = ((blockX & 0x3FFFFFF) << 38) | ((blockZ & 0x3FFFFFF) << 12) | (blockY & 0xFFF);
+        Integer block = blocks.get(location);
+        if (block==null) {return 0;}
+        return block;/*
         // Get ChunkXZ from Global BlockXZ
         int chunkX = (int)Math.floor((float)blockX/16);
         int chunkZ = (int)Math.floor((float)blockZ/16);
@@ -72,6 +80,6 @@ public class Chunks {
         if (chunk==null) {return 0;}
         Integer block = chunk.blockMap.get(blockXYZ);
         if (block==null) {return 0;}
-        return block;
+        return block;*/
     }
 }
