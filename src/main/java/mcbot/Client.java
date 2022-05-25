@@ -53,8 +53,6 @@ public class Client extends Thread{
             System.out.printf("<%s> Starting handshake\n", username);
             Serverbound.handshake(this);
             Serverbound.login_start(this);
-            //chunks.newChunk(5,7);
-            //chunks.newChunk(5,-6);
             Listen();
             System.out.printf("<%s> Stopping\n", username);
         } catch (Exception e) {
@@ -123,10 +121,6 @@ public class Client extends Thread{
             }
         } while ((read & 0b10000000) != 0);
         return result;
-    }
-
-    public void log(String string) {
-        System.out.printf("<%s> %s\n", username, string);
     }
 
     private void Listen() throws IOException, DataFormatException, InterruptedException {

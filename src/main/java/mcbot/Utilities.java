@@ -103,16 +103,7 @@ public class Utilities {
 
     public static byte[] coordsToPosition(long x, long y, long z) {
         long v = ((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF);
-        //System.out.printf("I X: %d Y: %d Z: %d\n",x,y,z);
-        //System.out.printf("O X: %d Y: %d Z: %d\n",(v>>38)&0x3FFFFFF,v&0xFFF,(v>>12)&0x3FFFFFF);
-/*       x = v>>38;
-        y = v&0xFFF;
-        z = (v>>12)&0x3fff;
-        if (x>=(1<<25)) {x-=1<<26;}
-        if (y>=(1<<11)) {y-=1<<12;}
-        if (z>=(1<<25)) {z-=1<<26;}*/
         return ByteBuffer.allocate(8).putLong(v).array();
- //       return ByteBuffer.allocate(8).putLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF)).array();
     }
 
     public static void ignoreNBT(ByteArrayInputStream inputStream) throws IOException, InterruptedException {

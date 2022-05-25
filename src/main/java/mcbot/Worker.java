@@ -105,9 +105,6 @@ public class Worker extends Thread {
     }
 
     private void useJob() throws IOException, InterruptedException {
-        //Serverbound.useItem(client);
-        //Thread.sleep(2000);
-        //Serverbound.playerDigging(client, 5, 0, 0, 0); // Release Bow/Finish eating
         Action.shootBow(client, true, -7, -59, 537);
         Action.shootBow(client, true, -14, -59, 530);
         Action.shootBow(client, true, -7, -56, 524);
@@ -147,13 +144,6 @@ public class Worker extends Thread {
         Action.walkTo(client, 31, -60, 560);
         Action.walkTo(client, 6, -60, 580);
         Action.walkTo(client, -27, -58, 572);
-/*        Pathfinder p = new Pathfinder(client);
-        if (p.getPath(2, -60, 538)) {
-            System.out.println("Doing path");
-            p.doPath();
-        } else {
-            System.out.println("No path");
-        }*/
     }
 
     private void followJob() throws IOException, InterruptedException {

@@ -15,7 +15,6 @@ public class Serverbound {
         Utilities.writeString(client.addr, outputStream); //Send Server IP
         outputStream.write(ByteBuffer.allocate(2).putShort(client.port).array());    //Send Server Port
         Utilities.writeVarInt(2, outputStream); //Mode to login (1 - Status, 2 - Login)
-        //Utilities.writeVarInt(2, outputStream); //Mode to login (1 - Status, 2 - Login) //DO NOT ASK WHY I HAVE TO DO THIS TWICE!!!
         client.SendPacket(outputStream.toByteArray());
     }
 

@@ -4,8 +4,7 @@ public class Entity {
     public int id;
     public int type;
     public double x, y, z;
-    //public Entity() {
-    //}
+
     public String typeString() {
         switch (type) {
             case 1:
