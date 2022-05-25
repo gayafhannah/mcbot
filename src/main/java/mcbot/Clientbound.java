@@ -174,6 +174,7 @@ public class Clientbound {
         int blocksArrayLength;
         int blockId;
         for (int chunkY=-4;chunkY<16;chunkY++) {
+            //System.out.printf("%d %d %d\n", chunkX, chunkY, chunkZ);
             blockCountBytes = new byte[2];
             data.read(blockCountBytes, 0, 2);
             blockCount = ByteBuffer.wrap(blockCountBytes).getShort();
@@ -181,7 +182,9 @@ public class Clientbound {
             // Enter block states palleted container
             bitsPerEntry = (byte)data.read();
             if (bitsPerEntry==0) { // Single Valued
+                //System.out.printf("cum\n");
                 blockId = Utilities.readVarInt(data);
+                Utilities.readVarInt(data);
                 // all blocks are of this blockId
                 //System.out.printf("Chunk %d %d %d is all ID:%d\n",chunkX, chunkY, chunkZ, blockId);
                 for (int x=0;x<16;x++) {
