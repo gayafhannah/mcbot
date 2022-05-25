@@ -2,15 +2,13 @@ package mcbot;
 
 import java.io.*;
 import java.util.*;
-import java.util.AbstractList.*;
-import java.util.ArrayList.*;
 
 import mcbot.Client;
 
 public class Pathfinder {
     public Client client;
     public HashMap<Long, Node> nodes = new HashMap<Long, Node>();
-    private ArrayList closed = new ArrayList();
+    private ArrayList<Node> closed = new ArrayList<Node>();
     private ArrayList<Node> open = new ArrayList<Node>();
     private int sX, sY, sZ; // Starting XYZ
     private int gX, gY, gZ; // Goal XYZ
@@ -23,7 +21,7 @@ public class Pathfinder {
         client = _client;
     }
 
-    public boolean getPath(int _gX, int _gY, int _gZ) {
+    public boolean getPath(int _gX, int _gY, int _gZ) throws IOException {
         gX = _gX;
         gY = _gY;
         gZ = _gZ;
@@ -38,13 +36,16 @@ public class Pathfinder {
         open.clear();
         open.add(cN);
 
+        Serverbound.chatMessage(client, "Calculating path");
+        long sTime = System.currentTimeMillis();
+
         maxDepth = 0;
         while ((open.size() != 0) && (maxDepth < maxSearchDistance)) {
             cN = open.get(0);
             //cN = open.removeFirst();
             if (cN == nodes.get(xyz(gX, gY, gZ))) {  // If reached target node
-                System.out.println("Reached goal");
                 path = buildPath(cN);
+                System.out.printf("Path calculated in %dms\n", System.currentTimeMillis()-sTime);
                 return true;
             }
             /*if (cN.parent == null) {
@@ -85,42 +86,40 @@ public class Pathfinder {
                             if (!canFit(nX, nY, nZ)) {continue;}
                         }
 
-                        if (true) {
-                            double nSCost = cN.cost + getCost(nX, nY, nZ);
-                            Node neighbour = nodes.get(xyz(nX, nY, nZ));
-                            if (neighbour==null) { // Create node if not exists
-                                neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
-                                nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
-                            }
-                            //System.out.println(nodes.size());
-                            //System.out.printf("Valid: %d %d %d %f / %x\n", nX, nY, nZ, nSCost,xyz(nX,nY,nZ));
-                            if (nSCost < neighbour.cost) {
-                                //System.out.println("Better cost found");
-                                if (open.contains(neighbour)) {open.remove(neighbour);}
-                                if (closed.contains(neighbour)) {closed.remove(neighbour);}
-                            }
-                            if (!open.contains(neighbour) && !closed.contains(neighbour)) {
-                                neighbour.cost = nSCost;
-                                neighbour.depth = cN.depth+1;
-                                neighbour.h = heuristic(nX, nY, nZ);
-                                neighbour.parent = cN;
-                                maxDepth = Math.max(maxDepth, neighbour.depth);
-                                open.add(neighbour);
-                                //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
-                                //System.out.println(neighbour);
-                            }
+                        double nSCost = cN.cost + getCost(nX, nY, nZ);
+                        Node neighbour = nodes.get(xyz(nX, nY, nZ));
+                        if (neighbour==null) { // Create node if not exists
+                            neighbour = new Node(cN, nX, nY, nZ, Double.POSITIVE_INFINITY, heuristic(nX, nY, nZ), 0);
+                            nodes.put(xyz(nX, nY, nZ), neighbour); // Fix depth value at end
+                        }
+                        //System.out.println(nodes.size());
+                        //System.out.printf("Valid: %d %d %d %f / %x\n", nX, nY, nZ, nSCost,xyz(nX,nY,nZ));
+                        if (nSCost < neighbour.cost) {
+                            //System.out.println("Better cost found");
+                            if (open.contains(neighbour)) {open.remove(neighbour);}
+                            if (closed.contains(neighbour)) {closed.remove(neighbour);}
+                        }
+                        if (!open.contains(neighbour) && !closed.contains(neighbour)) {
+                            neighbour.cost = nSCost;
+                            neighbour.depth = cN.depth+1;
+                            neighbour.h = heuristic(nX, nY, nZ);
+                            neighbour.parent = cN;
+                            maxDepth = Math.max(maxDepth, neighbour.depth);
+                            open.add(neighbour);
+                            //System.out.printf("Adding: %d %d %d , %d\n", nX, nY, nZ, open.size());
+                            //System.out.println(neighbour);
                         }
                     }
                 }
             }
         }
-        System.out.println("Failed to find path.");
+        System.out.printf("Failed to find path. Took %dms\n", System.currentTimeMillis()-sTime);
         path = null;
         return false;
     }
 
-    private LinkedList buildPath(Node cN) {
-        LinkedList path = new LinkedList();
+    private LinkedList<Node> buildPath(Node cN) {
+        LinkedList<Node> path = new LinkedList<Node>();
         while (cN != null) {
             //System.out.printf("%d %d %d\n", cN.x, cN.y, cN.z);
             path.add(cN);
@@ -133,13 +132,15 @@ public class Pathfinder {
         System.out.println("Path:");
         //for (Node n : path) {
         client.moveInterrupted = false;
-        for (int i=path.size()-1;i!=0;i--) {
+        Serverbound.chatMessage(client, "Pathing started");
+        for (int i=path.size()-1;i>=0;i--) {
             if (client.moveInterrupted) {break;}
             Node n = path.get(i);
-            System.out.printf("%d %d %d\n", n.x, n.y, n.z);
+            //System.out.printf("%d %d %d\n", n.x, n.y, n.z);
             Serverbound.playerPosition(client, n.x+0.5, n.y, n.z+0.5);
             Thread.sleep(200);
         }
+        Serverbound.chatMessage(client, "Pathing stopped");
     }
 
     private boolean validPosition(int x, int y, int z) { // Checks if position is valid for player to stand on
