@@ -51,6 +51,7 @@ public class Chunks {
         //    System.out.printf("X:%x Y:%x Z:%x XYZ:%x ID:%d %d %d\n",blockX,blockY,blockZ,blockXYZ,blockId,chunkX,chunkZ);}
         Chunk chunk = chunkMap.get(chunkXZ);
         if (chunk==null) {chunk = newChunk(chunkX,chunkZ);}
+        if (blockId==0) {chunk.blockMap.remove(blockXYZ); return;}
         chunk.blockMap.put(blockXYZ, blockId);
     }
 
@@ -69,6 +70,8 @@ public class Chunks {
         //System.out.printf("%x %x %x %x %d %d\n",blockX,blockY,blockZ,blockXYZ,chunkX,chunkZ);
         Chunk chunk = chunkMap.get(chunkXZ);
         if (chunk==null) {return 0;}
-        return chunk.blockMap.get(blockXYZ);
+        Integer block = chunk.blockMap.get(blockXYZ);
+        if (block==null) {return 0;}
+        return block;
     }
 }
