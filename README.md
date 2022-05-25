@@ -4,6 +4,7 @@ A Minecraft bot thing lol.
 # TODO
 ## World
  - Implement basic falling so bot isnt stuck in the air, getting kicked for flying
+ - Optimise chunk storage so in a normal world it doesnt use a stupid amount of memory during runtime
 ## Chat/Tasks
  - Chat parsing
    - Barely implemented
