@@ -166,6 +166,7 @@ public class Pathfinder {
     private double getCost(int nX, int nY, int nZ) { // Cost to get here
         double cost = Math.sqrt(Math.abs((double)Math.pow(gX-nX,2) + (double)Math.pow(gY-nY,2) + (double)Math.pow(gZ-nZ,2)));
         // Maybe add weird offsets and stuff if other conditions met
+        if (nY>cN.y) {cost += 0.1;} // Add some cost because jumping uses hunger
         return cost;
     }
 
