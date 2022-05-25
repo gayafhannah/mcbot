@@ -81,6 +81,16 @@ public class Action {
         Serverbound.playerDigging(client, 2, x, y, z);
     }
 
+    public static void walkTo(Client client, int x, int y, int z) throws IOException, InterruptedException {
+        Pathfinder p = new Pathfinder(client);
+        if (p.getPath(x, y, z)) {
+            System.out.println("Doing path");
+            p.doPath();
+        } else {
+            System.out.println("No path");
+        }
+    }
+
     //public static boolean moveDelta(Client client, int dX, int dY, int dZ) {moveDelta(client, dX, dY, dZ, 0.2);}
     //public static boolean moveDelta(Client client, int dX, int dY, int dZ, float speed) throws IOException, InterruptedException { // Move, speed is per tick
     //    client.moveInterrupted = false;

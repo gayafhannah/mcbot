@@ -140,12 +140,16 @@ public class Worker extends Thread {
     }
 
     private void pathJob() throws IOException, InterruptedException {
-        Pathfinder p = new Pathfinder(client);
+        Action.walkTo(client, 2, -60, 538);
+        Action.walkTo(client, 31, -60, 560);
+        Action.walkTo(client, 6, -60, 580);
+        Action.walkTo(client, -27, -58, 572);
+/*        Pathfinder p = new Pathfinder(client);
         if (p.getPath(2, -60, 538)) {
             System.out.println("Doing path");
             p.doPath();
         } else {
             System.out.println("No path");
-        }
+        }*/
     }
 }
