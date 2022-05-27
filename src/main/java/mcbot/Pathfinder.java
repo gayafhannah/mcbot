@@ -137,8 +137,10 @@ public class Pathfinder {
             if (client.moveInterrupted) {break;}
             //System.out.printf("%d %d %d\n", n.x, n.y, n.z);
             Node n = i.next();
+            Serverbound.playerPosition(client, (client.playerX+n.x+0.5)/2, (client.playerY+n.y)/2, (client.playerZ+n.z+0.5)/2);
+            Thread.sleep(100);
             Serverbound.playerPosition(client, n.x+0.5, n.y, n.z+0.5);
-            Thread.sleep(200);
+            Thread.sleep(100);
         }
         Serverbound.chatMessage(client, "Pathing stopped");
     }
