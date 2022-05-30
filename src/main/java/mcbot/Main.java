@@ -28,7 +28,7 @@ public class Main {
                 System.out.println("./main <ip> [usernames]");
                 return;
             case 1:
-                System.out.printf("One argument, Using default username <%s>\n", usernames[0]);
+                System.out.println("One argument, Using default usernames");
                 addr = args[0];
                 break;
             default:
