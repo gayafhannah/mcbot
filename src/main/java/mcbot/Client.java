@@ -56,7 +56,7 @@ public class Client extends Thread{
             Listen();
             System.out.printf("<%s> Stopping\n", username);
         } catch (Exception e) {
-            System.out.println("Exception: a" + e);
+            System.out.println("Exception<Client>: " + e);
         }
     }
 

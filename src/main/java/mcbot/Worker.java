@@ -59,7 +59,7 @@ public class Worker extends Thread {
                 Thread.sleep(1000);
             }
         } catch (Exception e) {
-            System.out.println("aejkrgn "+e);
+            System.out.println("Exception<Worker>: "+e);
         }
         System.out.println("Stopped");
     }
